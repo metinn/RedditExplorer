@@ -10,7 +10,7 @@ import Foundation
 protocol RedditAPIProtocol {
     func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing
     func getHotPosts() async throws -> Listing
-    func getPost() async throws -> Listing
+    func getPost(subreddit: String, id: String) async throws -> [CommentListing]
 }
 
 class RedditAPI: RedditAPIProtocol {
@@ -40,8 +40,8 @@ class RedditAPI: RedditAPIProtocol {
         return try JSONDecoder().decode(Listing.self, from: data)
     }
     
-    func getPost() async throws -> Listing {
-        let url = URL(string: "\(baseUrl)/hot.json?raw_json=1")!
+    func getPost(subreddit: String, id: String) async throws -> [CommentListing] {
+        let url = URL(string: "\(baseUrl)/r/\(subreddit)/\(id).json")!
         let (data, response) = try await URLSession.shared.data(from: url)
         
         let statusCode = (response as! HTTPURLResponse).statusCode
@@ -49,6 +49,6 @@ class RedditAPI: RedditAPIProtocol {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
-        return try JSONDecoder().decode(Listing.self, from: data)
+        return try JSONDecoder().decode([CommentListing].self, from: data)
     }
 }
