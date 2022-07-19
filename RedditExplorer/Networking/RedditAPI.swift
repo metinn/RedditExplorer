@@ -14,6 +14,8 @@ protocol RedditAPIProtocol {
 }
 
 class RedditAPI: RedditAPIProtocol {
+    static let shared = RedditAPI()
+    
     let baseUrl = "https://www.reddit.com"
     
     func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing {
