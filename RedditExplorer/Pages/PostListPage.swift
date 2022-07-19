@@ -10,12 +10,13 @@ import CryptoKit
 import CachedAsyncImage
 
 struct PostListPage: View {
+    let api = RedditAPI.shared
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
     
     func fetchListings() async {
         do {
-            let listing = try await RedditAPI().getHotPosts()
+            let listing = try await api.getHotPosts()
             posts = listing.data.children.map { $0.data }
         } catch let err {
             print("Error: \(err.localizedDescription)")

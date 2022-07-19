@@ -12,14 +12,15 @@ struct PostViewPageViewModel {
         let id: String
         let author: String?
         let score: Int?
-        let body: String?
+        let body: String
         let nestLevel: Int
+        let isCollapsed: Bool
     }
 }
 
 struct PostViewPage: View {
     let post: Post
-    let api = RedditAPI()
+    let api = RedditAPI.shared
     @State var listings: [CommentListing]?
     @State var allComments: [PostViewPageViewModel.Comment] = []
     @State var collapsedComments: [String] = []
@@ -43,13 +44,16 @@ struct PostViewPage: View {
     }
     
     func compactComments(comment: Comment, nestLevel: Int) -> [PostViewPageViewModel.Comment] {
+        let isCollapsed = isCollapsed(comment.id)
+        
         var comments = [PostViewPageViewModel.Comment(id: comment.id,
                                                       author: comment.author,
                                                       score: comment.score,
-                                                      body: comment.body,
-                                                      nestLevel: nestLevel)]
+                                                      body: comment.body ?? "",
+                                                      nestLevel: nestLevel,
+                                                      isCollapsed: isCollapsed)]
         
-        if let replies = comment.replies?.data.children.map({ $0.data }), !isCollapsed(comment.id) {
+        if !isCollapsed, let replies = comment.replies?.data.children.map({ $0.data }) {
             for reply in replies {
                 comments.append(contentsOf: compactComments(comment: reply, nestLevel: nestLevel + 1))
             }
@@ -68,8 +72,13 @@ struct PostViewPage: View {
                 .frame(maxWidth: .infinity,
                        alignment: .topLeading)
             
+            RoundedRectangle(cornerRadius: 1.5)
+                .foregroundColor(Color.gray)
+                .frame(height: 1)
+                .padding(.vertical, 2)
+            
             ForEach(allComments, id: \.id) { comment in
-                CommentView(comment: comment, postAuthor: self.post.author, nestLevel: comment.nestLevel)
+                CommentView(comment: comment, postAuthor: self.post.author)
                 .onTapGesture {
                     if isCollapsed(comment.id) {
                         collapsedComments.removeAll { $0 == comment.id }
@@ -85,54 +94,6 @@ struct PostViewPage: View {
         .padding(.horizontal)
         .onAppear {
             Task { await fetchComments() }
-        }
-    }
-}
-
-struct CommentView: View {
-    let comment: PostViewPageViewModel.Comment
-    let postAuthor: String
-    let nestLevel: Int
-
-    var authorText: some View {
-        if comment.author == postAuthor {
-            return Text(comment.author ?? "-a-").foregroundColor(.accentColor).bold()
-        } else {
-            return Text(comment.author ?? "-a-")
-        }
-    }
-    
-    var body: some View {
-        Group {
-            HStack {
-                /// Left border for nested comments
-                if nestLevel > 0 {
-                    RoundedRectangle(cornerRadius: 1.5)
-                        .foregroundColor(Color(hue: 1.0 / Double(nestLevel), saturation: 1.0, brightness: 1.0))
-                        .frame(width: 3)
-                }
-                /// Content
-                VStack(alignment: .leading) {
-                    HStack {
-                        authorText
-                        Image(systemName: "arrow.up")
-                        Text("\(comment.score ?? 0)")
-                    }
-                        .font(.caption)
-                        .opacity(0.75)
-                    Text(comment.body ?? "")
-                }
-            }
-            .padding(.leading, CGFloat(self.nestLevel * 10))
-            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: Alignment.topLeading)
-            
-//            /// Recursive comments
-//            if showSubcomments && comment.replies != nil {
-//                ForEach(comment.replies!.data.children.map { $0.data }, id: \.id) { reply in
-////                    let isCollapsed = collapsedComments.contains { $0 == comment.id }
-//                    CommentView(comment: reply, postAuthor: self.postAuthor, nestLevel: self.nestLevel + 1, showSubcomments: true)
-//                }
-//            }
         }
     }
 }
