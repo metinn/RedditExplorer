@@ -20,7 +20,7 @@ struct CommentView: View {
     }
     
     var body: some View {
-        HStack {
+        HStack(alignment: .top) {
             // Left border
             if comment.nestLevel > 0 {
                 RoundedRectangle(cornerRadius: 1.5)
@@ -38,11 +38,15 @@ struct CommentView: View {
                 .opacity(0.75)
                 
                 Text(comment.isCollapsed ? "" : comment.body)
+                
+                RoundedRectangle(cornerRadius: 1.5)
+                    .foregroundColor(Color.gray)
+                    .frame(height: 0.5)
+                    .padding(.vertical, 2)
             }
             
             // Expand icon
             if comment.isCollapsed {
-                Spacer()
                 Image(systemName: "chevron.down")
                     .padding(.trailing, 10)
             }
@@ -50,11 +54,17 @@ struct CommentView: View {
         .padding(.leading, CGFloat(comment.nestLevel * 10))
         .padding(.vertical, 3)
         .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: Alignment.topLeading)
+        .contentShape(Rectangle())
     }
 }
 
 struct CommentView_Previews: PreviewProvider {
     static var previews: some View {
-        return CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: true), postAuthor: "joe")
+        return Group {
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: false), postAuthor: "joe")
+                .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/375.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/80.0/*@END_MENU_TOKEN@*/))
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: true), postAuthor: "joe")
+                .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/375.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/60.0/*@END_MENU_TOKEN@*/))
+        }
     }
 }

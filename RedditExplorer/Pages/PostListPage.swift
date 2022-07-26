@@ -14,10 +14,11 @@ struct PostListPage: View {
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
     
-    func fetchListings() async {
+    func fetchNextPosts() async {
         do {
-            let listing = try await api.getHotPosts()
-            posts = listing.data.children.map { $0.data }
+            let listing = try await api.getHotPosts(after: posts.last?.name, limit: 10)
+            let newPosts = listing.data.children.map { $0.data }
+            posts.append(contentsOf: newPosts)
         } catch let err {
             print("Error: \(err.localizedDescription)")
         }
@@ -28,13 +29,18 @@ struct PostListPage: View {
             List(posts, id: \.id) { post in
                 NavigationLink(destination: PostViewPage(post: post)) {
                     PostCellView(post: post, limitVerticalSpace: true)
+                        .onAppear {
+                            if posts.last?.name == post.name {
+                                Task { await fetchNextPosts() }
+                            }
+                        }
                 }
             }
             .listStyle(InsetListStyle())
             .navigationBarTitle("Reddit")
         }
         .onAppear {
-            Task { await fetchListings() }
+            Task { await fetchNextPosts() }
         }
     }
 }

@@ -28,14 +28,14 @@ struct PostViewPage: View {
     func fetchComments() async {
         do {
             self.listings = try await api.getPost(subreddit: post.subreddit, id: post.id)
-            await processComments()
+            await prepareComments()
             
         } catch let err {
             print("metinn", err.localizedDescription)
         }
     }
     
-    func processComments() async {
+    func prepareComments() async {
         guard let commentListing = listings else { return }
         self.allComments = commentListing.dropFirst()
             .map({ $0.data.children })
@@ -75,19 +75,25 @@ struct PostViewPage: View {
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
                 .frame(height: 1)
-                .padding(.vertical, 2)
+                .padding(.bottom, 5)
+            
+            if allComments.isEmpty {
+                ProgressView()
+            }
             
             ForEach(allComments, id: \.id) { comment in
-                CommentView(comment: comment, postAuthor: self.post.author)
-                .onTapGesture {
+                Button {
                     if isCollapsed(comment.id) {
                         collapsedComments.removeAll { $0 == comment.id }
                     } else {
                         collapsedComments.append(comment.id)
                     }
                     
-                    Task { await processComments() }
+                    Task { await prepareComments() }
+                } label: {
+                    CommentView(comment: comment, postAuthor: self.post.author)
                 }
+                .buttonStyle(.plain)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
