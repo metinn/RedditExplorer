@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import SwiftyJSON
 
 protocol RedditAPIProtocol {
     func getHotPosts(after: String?, limit: Int?) async throws -> Listing
     func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing
-    func getPost(subreddit: String, id: String) async throws -> [CommentListing]
+    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> JSON
 }
 
 class RedditAPI: RedditAPIProtocol {
@@ -51,8 +52,12 @@ class RedditAPI: RedditAPIProtocol {
         return try JSONDecoder().decode(Listing.self, from: data)
     }
     
-    func getPost(subreddit: String, id: String) async throws -> [CommentListing] {
-        let url = buildUrl(path: "/r/\(subreddit)/\(id).json")
+    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> JSON {
+        let params = ["raw_json": "1",
+                      "after": after,
+                      "limit": limit == nil ? nil : String(limit!)]
+        
+        let url = buildUrl(path: "/r/\(subreddit)/\(id).json", params: params)
         let (data, response) = try await URLSession.shared.data(from: url)
         
         let statusCode = (response as! HTTPURLResponse).statusCode
@@ -60,7 +65,7 @@ class RedditAPI: RedditAPIProtocol {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
-        return try JSONDecoder().decode([CommentListing].self, from: data)
+        return try JSON(data: data)
     }
 }
 

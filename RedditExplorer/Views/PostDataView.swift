@@ -48,6 +48,7 @@ struct PostDataView_Previews: PreviewProvider {
         ForEach(ColorScheme.allCases, id: \.self) {
             PostDataView(post: Post(id: "1", title: "Post Title", name: "Author 1", selftext: "", selftext_html: nil, thumbnail: "", url: "", author: "", subreddit: "", subreddit_name_prefixed: "r/tifu", ups: 412, upvote_ratio: 0.76, num_comments: 22, stickied: false, created_utc: 0, preview: nil, link_flair_text: nil, is_original_content: false, spoiler: false, replies: nil))
                 .preferredColorScheme($0)
+                .previewLayout(.sizeThatFits)
         }
     }
 }

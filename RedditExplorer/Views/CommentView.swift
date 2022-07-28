@@ -20,24 +20,31 @@ struct CommentView: View {
     }
     
     var body: some View {
-        HStack(alignment: .top) {
+        HStack() {
             // Left border
             if comment.nestLevel > 0 {
+                // TODO: this takes too much vertical space, makes preview confusing
                 RoundedRectangle(cornerRadius: 1.5)
                     .foregroundColor(Color(hue: 1.0 / Double(comment.nestLevel), saturation: 1.0, brightness: 1.0))
                     .frame(width: 3)
             }
             // Content
             VStack(alignment: .leading) {
-                HStack {
-                    authorText
-                    Image(systemName: "arrow.up")
-                    Text("\(comment.score ?? 0)")
+                switch comment.kind {
+                case .comment:
+                    HStack {
+                        authorText
+                        Image(systemName: "arrow.up")
+                        Text("\(comment.score ?? 0)")
+                    }
+                    .font(.caption)
+                    .opacity(0.75)
+                    
+                    Text(comment.isCollapsed ? "" : comment.body)
+                case .more:
+                    Text("\(comment.count ?? 0) more")
+                        .foregroundColor(.blue)
                 }
-                .font(.caption)
-                .opacity(0.75)
-                
-                Text(comment.isCollapsed ? "" : comment.body)
                 
                 RoundedRectangle(cornerRadius: 1.5)
                     .foregroundColor(Color.gray)
@@ -61,10 +68,12 @@ struct CommentView: View {
 struct CommentView_Previews: PreviewProvider {
     static var previews: some View {
         return Group {
-            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: false), postAuthor: "joe")
-                .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/375.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/80.0/*@END_MENU_TOKEN@*/))
-            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: true), postAuthor: "joe")
-                .previewLayout(.fixed(width: /*@START_MENU_TOKEN@*/375.0/*@END_MENU_TOKEN@*/, height: /*@START_MENU_TOKEN@*/60.0/*@END_MENU_TOKEN@*/))
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment kasmdkas", nestLevel: 0, isCollapsed: false, kind: .comment, count: nil), postAuthor: "joe")
+                .previewLayout(.sizeThatFits)
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: true, kind: .comment, count: nil), postAuthor: "joe")
+                .previewLayout(.sizeThatFits)
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "", score: 0, body: "", nestLevel: 3, isCollapsed: false, kind: .more, count: 8), postAuthor: "joe")
+                .previewLayout(.sizeThatFits)
         }
     }
 }
