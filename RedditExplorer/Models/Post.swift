@@ -8,8 +8,8 @@
 
 import Foundation
 
-/// A post from the Reddit API
-struct Post: Decodable, Identifiable {
+//TODO: parse it with reddit objects and make fields non-optional
+struct Post: RedditObject {
     let id: String
     var title: String
     let name: String

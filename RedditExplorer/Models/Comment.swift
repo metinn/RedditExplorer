@@ -8,13 +8,21 @@
 
 import Foundation
 
-/// A comment from the Reddit API
+//TODO: parse it with reddit objects and make fields non-optional
 struct Comment: RedditObject {
     let id: String
-    let author: String?
-    let score: Int?
-    let body: String?
+    let author: String
+    let score: Int
+    let body: String
     let replies: RedditObjectWrapper?
+
+    init(id: String, author: String, score: Int, body: String, replies: RedditObjectWrapper?) {
+        self.id = id
+        self.author = author
+        self.score = score
+        self.body = body
+        self.replies = replies
+    }
     
     enum CommentKeys: String, CodingKey {
         case id
@@ -27,9 +35,9 @@ struct Comment: RedditObject {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CommentKeys.self)
         id = try values.decode(String.self, forKey: .id)
-        author = try? values.decode(String.self, forKey: .author)
-        score = try? values.decode(Int.self, forKey: .score)
-        body = try? values.decode(String.self, forKey: .body)
+        author = try values.decode(String.self, forKey: .author)
+        score = try values.decode(Int.self, forKey: .score)
+        body = try values.decode(String.self, forKey: .body)
         
         if let replies = try? values.decode(RedditObjectWrapper.self, forKey: .replies) {
             self.replies = replies

@@ -20,16 +20,3 @@ struct Listing: Decodable {
         }
     }
 }
-
-/// Root of Reddit API response for comments
-struct CommentListing: Decodable {
-    let data: CommentListingData
-    
-    struct CommentListingData: Decodable {
-        let children: [CommentData]
-        
-        struct CommentData: Decodable {
-            let data: Comment
-        }
-    }
-}

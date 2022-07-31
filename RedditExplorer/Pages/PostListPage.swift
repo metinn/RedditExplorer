@@ -10,7 +10,7 @@ import CryptoKit
 import CachedAsyncImage
 
 struct PostListPage: View {
-    let api = RedditAPI.shared
+    let api: RedditAPIProtocol = RedditAPI.shared
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
     

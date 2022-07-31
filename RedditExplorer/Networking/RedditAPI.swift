@@ -10,15 +10,13 @@ import SwiftyJSON
 
 protocol RedditAPIProtocol {
     func getHotPosts(after: String?, limit: Int?) async throws -> Listing
-    func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing
-    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> [CommentListing]
+    func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
 }
 
 class RedditAPI: RedditAPIProtocol {
     static let shared = RedditAPI()
     
     let baseUrl = "https://www.reddit.com"
-    let components = URLComponents(string: "https://www.reddit.com")!
     
     func getHotPosts(after: String?, limit: Int?) async throws -> Listing {
         // Url creation
@@ -32,40 +30,28 @@ class RedditAPI: RedditAPIProtocol {
         let (data, response) = try await URLSession.shared.data(from: url)
         
         let statusCode = (response as! HTTPURLResponse).statusCode
-        if statusCode != 200 {
+        guard statusCode == 200 else {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
         return try JSONDecoder().decode(Listing.self, from: data)
     }
     
-    func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing {
-        let url = buildUrl(path: "/r/\(subReddit)/\(sortBy.rawValue).json", params: ["raw_json": "1"])
+    func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment] {
+        let url = buildUrl(path: "/r/\(subreddit)/comments/\(id).json", params: ["comment": commentId])
         
         let (data, response) = try await URLSession.shared.data(from: url)
         
         let statusCode = (response as! HTTPURLResponse).statusCode
-        if statusCode != 200 {
+        guard statusCode == 200 else {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
-        return try JSONDecoder().decode(Listing.self, from: data)
-    }
-    
-    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> [CommentListing] {
-        let params = ["raw_json": "1",
-                      "after": after,
-                      "limit": limit == nil ? nil : String(limit!)]
-        
-        let url = buildUrl(path: "/r/\(subreddit)/\(id).json", params: params)
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        let statusCode = (response as! HTTPURLResponse).statusCode
-        if statusCode != 200 {
-            throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
+        let wrappers = try JSONDecoder().decode([RedditObjectWrapper].self, from: data)
+        guard let commentListing = wrappers[1].data as? RedditListing else {
+            throw NSError(domain: "Received object is not listing", code: -1, userInfo: nil)
         }
-        
-        return try JSONDecoder().decode([CommentListing].self, from: data)
+        return commentListing.children.compactMap { $0.data as? Comment }
     }
 }
 
