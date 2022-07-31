@@ -11,7 +11,7 @@ import SwiftyJSON
 protocol RedditAPIProtocol {
     func getHotPosts(after: String?, limit: Int?) async throws -> Listing
     func getSubReddit(subReddit: String, sortBy: SortBy) async throws -> Listing
-    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> JSON
+    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> [CommentListing]
 }
 
 class RedditAPI: RedditAPIProtocol {
@@ -52,7 +52,7 @@ class RedditAPI: RedditAPIProtocol {
         return try JSONDecoder().decode(Listing.self, from: data)
     }
     
-    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> JSON {
+    func getPost(subreddit: String, id: String, after: String?, limit: Int?) async throws -> [CommentListing] {
         let params = ["raw_json": "1",
                       "after": after,
                       "limit": limit == nil ? nil : String(limit!)]
@@ -65,7 +65,7 @@ class RedditAPI: RedditAPIProtocol {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
-        return try JSON(data: data)
+        return try JSONDecoder().decode([CommentListing].self, from: data)
     }
 }
 

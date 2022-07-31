@@ -30,8 +30,7 @@ struct CommentView: View {
             }
             // Content
             VStack(alignment: .leading) {
-                switch comment.kind {
-                case .comment:
+                if comment.kind == .comment {
                     HStack {
                         authorText
                         Image(systemName: "arrow.up")
@@ -41,7 +40,7 @@ struct CommentView: View {
                     .opacity(0.75)
                     
                     Text(comment.isCollapsed ? "" : comment.body)
-                case .more:
+                } else if comment.kind == .moreComment {
                     Text("\(comment.count ?? 0) more")
                         .foregroundColor(.blue)
                 }
@@ -72,7 +71,7 @@ struct CommentView_Previews: PreviewProvider {
                 .previewLayout(.sizeThatFits)
             CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "eskimo", score: 42, body: "meaningful comment", nestLevel: 2, isCollapsed: true, kind: .comment, count: nil), postAuthor: "joe")
                 .previewLayout(.sizeThatFits)
-            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "", score: 0, body: "", nestLevel: 3, isCollapsed: false, kind: .more, count: 8), postAuthor: "joe")
+            CommentView(comment: PostViewPageViewModel.Comment(id: "id", author: "", score: 0, body: "", nestLevel: 3, isCollapsed: false, kind: .moreComment, count: 8), postAuthor: "joe")
                 .previewLayout(.sizeThatFits)
         }
     }

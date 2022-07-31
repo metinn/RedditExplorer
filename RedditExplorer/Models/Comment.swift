@@ -9,12 +9,12 @@
 import Foundation
 
 /// A comment from the Reddit API
-struct Comment: Decodable {
+struct Comment: RedditObject {
     let id: String
     let author: String?
     let score: Int?
     let body: String?
-    let replies: CommentListing?
+    let replies: RedditObjectWrapper?
     
     enum CommentKeys: String, CodingKey {
         case id
@@ -31,7 +31,7 @@ struct Comment: Decodable {
         score = try? values.decode(Int.self, forKey: .score)
         body = try? values.decode(String.self, forKey: .body)
         
-        if let replies = try? values.decode(CommentListing.self, forKey: .replies) {
+        if let replies = try? values.decode(RedditObjectWrapper.self, forKey: .replies) {
             self.replies = replies
         } else {
             replies = nil

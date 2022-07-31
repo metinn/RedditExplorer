@@ -6,14 +6,8 @@
 //
 
 import SwiftUI
-import SwiftyJSON
 
 struct PostViewPageViewModel {
-    enum Kind: String {
-        case comment = "t1"
-        case more = "more"
-    }
-    
     struct Comment {
         let id: String
         let author: String?
@@ -21,7 +15,7 @@ struct PostViewPageViewModel {
         let body: String
         let nestLevel: Int
         let isCollapsed: Bool
-        let kind: Kind
+        let kind: RedditObjectType
         let count: Int?
     }
 }
@@ -29,16 +23,13 @@ struct PostViewPageViewModel {
 struct PostViewPage: View {
     let post: Post
     let api = RedditAPI.shared
-    @State var postData: JSON?
+    @State var listings: [CommentListing]?
     @State var allComments: [PostViewPageViewModel.Comment] = []
     @State var collapsedComments: [String] = []
     
     func fetchComments() async {
         do {
-            postData = try await api.getPost(subreddit: post.subreddit,
-                                                 id: post.id,
-                                                 after: nil,
-                                                 limit: 20)
+            self.listings = try await api.getPost(subreddit: post.subreddit, id: post.id, after: nil, limit: nil)
             await prepareComments()
             
         } catch let err {
@@ -47,32 +38,40 @@ struct PostViewPage: View {
     }
     
     func prepareComments() async {
-        guard let commentDatas = postData?[1]["data"]["children"].array as? [JSON] else {
-            return
-        }
-        
-        allComments =  commentDatas.flatMap {
-            compactComments(commentData: $0, nestLevel: 0)
-        }
+        guard let commentListing = listings else { return }
+        self.allComments = commentListing.dropFirst()
+            .map({ $0.data.children })
+            .flatMap({ $0.map { $0.data } })
+            .flatMap { compactComments(comment: $0, nestLevel: 0, kind: .comment) }
     }
     
-    func compactComments(commentData: JSON, nestLevel: Int) -> [PostViewPageViewModel.Comment] {
-        guard let kind = PostViewPageViewModel.Kind(rawValue: commentData["kind"].stringValue) else { return [] }
-        let comment = commentData["data"]
+    func compactComments(comment: Comment, nestLevel: Int, kind: RedditObjectType) -> [PostViewPageViewModel.Comment] {
+        let isCollapsed = isCollapsed(comment.id)
         
-        let isCollapsed = isCollapsed(comment["id"].stringValue)
-        var comments = [PostViewPageViewModel.Comment(id: comment["id"].stringValue,
-                                                      author: comment["author"].stringValue,
-                                                      score: comment["score"].intValue,
-                                                      body: comment["body"].stringValue,
+        var comments = [PostViewPageViewModel.Comment(id: comment.id,
+                                                      author: comment.author,
+                                                      score: comment.score,
+                                                      body: comment.body ?? "",
                                                       nestLevel: nestLevel,
                                                       isCollapsed: isCollapsed,
                                                       kind: kind,
-                                                      count: comment["count"].int)]
+                                                      count: nil)]
         
-        if !isCollapsed, let replies = comment["replies"]["data"]["children"].array {
-            for reply in replies {
-                comments.append(contentsOf: compactComments(commentData: reply, nestLevel: nestLevel + 1))
+        if !isCollapsed, let listing = comment.replies?.data as? RedditListing {
+            for child in listing.children {
+                if let reply = child.data as? Comment {
+                    comments.append(contentsOf: compactComments(comment: reply, nestLevel: nestLevel + 1, kind: child.kind))
+                } else if let more = child.data as? CommentMore {
+                    let moreComment = PostViewPageViewModel.Comment(id: more.id,
+                                                                    author: nil,
+                                                                    score: nil,
+                                                                    body: "",
+                                                                    nestLevel: nestLevel,
+                                                                    isCollapsed: isCollapsed,
+                                                                    kind: child.kind,
+                                                                    count: more.count)
+                    comments.append(moreComment)
+                }
             }
         }
         
@@ -83,27 +82,38 @@ struct PostViewPage: View {
         return collapsedComments.contains { $0 == commentId }
     }
     
+    func onCommentTap(_ comment: PostViewPageViewModel.Comment) {
+        if isCollapsed(comment.id) {
+            collapsedComments.removeAll { $0 == comment.id }
+        } else {
+            collapsedComments.append(comment.id)
+        }
+        
+        Task { await prepareComments() }
+    }
+    
     var body: some View {
         ScrollView {
-            // post
             PostCellView(post: post, limitVerticalSpace: false)
                 .frame(maxWidth: .infinity,
                        alignment: .topLeading)
             
-            // seperator
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
                 .frame(height: 1)
                 .padding(.bottom, 5)
             
-            // progress
             if allComments.isEmpty {
                 ProgressView()
             }
             
-            // comments
             ForEach(allComments, id: \.id) { comment in
-                buildComment(comment)
+                Button {
+                    onCommentTap(comment)
+                } label: {
+                    CommentView(comment: comment, postAuthor: self.post.author)
+                }
+                .buttonStyle(.plain)
             }
         }
         .navigationBarTitleDisplayMode(.inline)
@@ -111,21 +121,6 @@ struct PostViewPage: View {
         .onAppear {
             Task { await fetchComments() }
         }
-    }
-    
-    func buildComment(_ comment: PostViewPageViewModel.Comment) -> some View {
-        return Button {
-            if isCollapsed(comment.id) {
-                collapsedComments.removeAll { $0 == comment.id }
-            } else {
-                collapsedComments.append(comment.id)
-            }
-            
-            Task { await prepareComments() }
-        } label: {
-            CommentView(comment: comment, postAuthor: self.post.author)
-        }
-        .buttonStyle(.plain)
     }
 }
 
