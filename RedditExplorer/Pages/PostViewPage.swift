@@ -18,7 +18,21 @@ struct PostViewPage: View {
             self.commentList = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: nil)
             
         } catch let err {
-            print("metinn", err.localizedDescription)
+            print("Error", err.localizedDescription)
+        }
+    }
+    
+    func fetchMoreComment(id: String) async {
+        do {
+            guard
+                let new = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: id).first,
+                let index = commentList?.firstIndex(where: { $0.id == new.id })
+            else { return }
+            
+            commentList?[index] = new
+            
+        } catch let err {
+            print("Error", err.localizedDescription)
         }
     }
     
@@ -43,7 +57,7 @@ struct PostViewPage: View {
             
             if let comments = commentList {
                 ForEach(comments, id: \.id) { comment in
-                    buildComment(comment: comment, depth: 0)
+                    buildComment(comment: comment, depth: 0, topParentId: comment.id)
                 }
             }
         }
@@ -54,7 +68,7 @@ struct PostViewPage: View {
         }
     }
     
-    func buildComment(comment: Comment, depth: Int) -> AnyView {
+    func buildComment(comment: Comment, depth: Int, topParentId: String) -> AnyView {
         let collapsed = isCollapsed(comment.id)
         
         // comment
@@ -81,12 +95,20 @@ struct PostViewPage: View {
             
             ForEach(replies.children, id: \.data.id)  { replyObject in
                 if let reply = replyObject.data as? Comment {
-                    buildComment(comment: reply, depth: depth + 1)
-                } else if let more = replyObject.data as? CommentMore {
-                    Text("\(more.count) more comment")
+                    buildComment(comment: reply, depth: depth + 1, topParentId: topParentId)
+                    
+                } else if let more = replyObject.data as? MoreComment {
+                    buildMoreComment(more, depth: depth, topParentId: topParentId)
                 }
             }
         })
+    }
+    
+    func buildMoreComment(_ more: MoreComment, depth: Int, topParentId: String) -> some View {
+        return MoreCommentView(moreComment: more, depth: depth + 1)
+            .onTapGesture {
+                Task { await fetchMoreComment(id: topParentId) }
+            }
     }
 }
 

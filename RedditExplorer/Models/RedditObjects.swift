@@ -40,7 +40,7 @@ struct RedditObjectWrapper: Decodable {
         case .comment:
             data = try values.decode(Comment.self, forKey: .data)
         case .moreComment:
-            data = try values.decode(CommentMore.self, forKey: .data)
+            data = try values.decode(MoreComment.self, forKey: .data)
         case .listing:
             data = try values.decode(RedditListing.self, forKey: .data)
         case .link:
