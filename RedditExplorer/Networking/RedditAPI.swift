@@ -6,10 +6,9 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 protocol RedditAPIProtocol {
-    func getHotPosts(after: String?, limit: Int?) async throws -> Listing
+    func getHotPosts(after: String?, limit: Int?) async throws -> [Post]
     func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
 }
 
@@ -18,7 +17,7 @@ class RedditAPI: RedditAPIProtocol {
     
     let baseUrl = "https://www.reddit.com"
     
-    func getHotPosts(after: String?, limit: Int?) async throws -> Listing {
+    func getHotPosts(after: String?, limit: Int?) async throws -> [Post] {
         // Url creation
         let params = ["raw_json": "1",
                       "after": after,
@@ -34,7 +33,11 @@ class RedditAPI: RedditAPIProtocol {
             throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
         }
         
-        return try JSONDecoder().decode(Listing.self, from: data)
+        let wrapper = try JSONDecoder().decode(RedditObjectWrapper.self, from: data)
+        guard let listing = wrapper.data as? RedditListing else {
+            throw NSError(domain: "Parsing Error: data is not Listing", code: -1, userInfo: nil)
+        }
+        return listing.children.compactMap { $0.data as? Post }
     }
     
     func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment] {

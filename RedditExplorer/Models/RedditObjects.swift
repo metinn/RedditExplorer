@@ -44,8 +44,7 @@ struct RedditObjectWrapper: Decodable {
         case .listing:
             data = try values.decode(RedditListing.self, forKey: .data)
         case .link:
-            // TODO: implement
-            data = RedditListing(children: [])
+            data = try values.decode(Post.self, forKey: .data)
         }
     }
 }

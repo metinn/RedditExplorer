@@ -16,8 +16,7 @@ struct PostListPage: View {
     
     func fetchNextPosts() async {
         do {
-            let listing = try await api.getHotPosts(after: posts.last?.name, limit: 10)
-            let newPosts = listing.data.children.map { $0.data }
+            let newPosts = try await api.getHotPosts(after: posts.last?.name, limit: 10)
             posts.append(contentsOf: newPosts)
         } catch let err {
             print("Error: \(err.localizedDescription)")

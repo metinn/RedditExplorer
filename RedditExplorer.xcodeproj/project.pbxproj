@@ -24,7 +24,6 @@
 		63EBEF0827E763EC00DB018D /* SortBy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EBEF0427E763EC00DB018D /* SortBy.swift */; };
 		63EBEF0927E763EC00DB018D /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EBEF0527E763EC00DB018D /* Comment.swift */; };
 		63EBEF0A27E763EC00DB018D /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EBEF0627E763EC00DB018D /* Post.swift */; };
-		63EBEF0B27E763EC00DB018D /* Listing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63EBEF0727E763EC00DB018D /* Listing.swift */; };
 		63ED944E2810196800061A22 /* PostViewPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED944D2810196800061A22 /* PostViewPage.swift */; };
 		63ED94522816BCD300061A22 /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED94512816BCD300061A22 /* Time.swift */; };
 		63ED94542816C11400061A22 /* PostHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63ED94532816C11400061A22 /* PostHeaderView.swift */; };
@@ -59,7 +58,6 @@
 		63EBEF0427E763EC00DB018D /* SortBy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortBy.swift; sourceTree = "<group>"; };
 		63EBEF0527E763EC00DB018D /* Comment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		63EBEF0627E763EC00DB018D /* Post.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
-		63EBEF0727E763EC00DB018D /* Listing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Listing.swift; sourceTree = "<group>"; };
 		63ED944D2810196800061A22 /* PostViewPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewPage.swift; sourceTree = "<group>"; };
 		63ED94512816BCD300061A22 /* Time.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		63ED94532816C11400061A22 /* PostHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostHeaderView.swift; sourceTree = "<group>"; };
@@ -166,7 +164,6 @@
 			isa = PBXGroup;
 			children = (
 				63A039832896801C00B0C568 /* RedditObjects.swift */,
-				63EBEF0727E763EC00DB018D /* Listing.swift */,
 				63EBEF0627E763EC00DB018D /* Post.swift */,
 				63EBEF0527E763EC00DB018D /* Comment.swift */,
 				63A039812896800100B0C568 /* MoreComment.swift */,
@@ -304,7 +301,6 @@
 				63EBEF0927E763EC00DB018D /* Comment.swift in Sources */,
 				63ED94522816BCD300061A22 /* Time.swift in Sources */,
 				63ED94542816C11400061A22 /* PostHeaderView.swift in Sources */,
-				63EBEF0B27E763EC00DB018D /* Listing.swift in Sources */,
 				63EBEED027E6486900DB018D /* PostListPage.swift in Sources */,
 				63EBEECE27E6486900DB018D /* RedditExplorerApp.swift in Sources */,
 				636D719628972A5800354E89 /* CommentCell.swift in Sources */,
