@@ -38,6 +38,7 @@ struct PostListPage: View {
             .listStyle(InsetListStyle())
             .navigationBarTitle("Reddit")
         }
+        .navigationViewStyle(.stack)
         .onAppear {
             Task { await fetchNextPosts() }
         }

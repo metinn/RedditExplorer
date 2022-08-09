@@ -8,7 +8,6 @@
 
 import Foundation
 
-//TODO: parse it with reddit objects and make fields non-optional
 struct Post: RedditObject {
     let id: String
     var title: String

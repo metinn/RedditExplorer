@@ -12,6 +12,7 @@ struct PostViewPage: View {
     let api: RedditAPIProtocol = RedditAPI.shared
     @State var commentList: [Comment]?
     @State var collapsedComments: [String] = []
+    @State private var showWebView = false
     
     func fetchComments() async {
         do {
@@ -45,6 +46,9 @@ struct PostViewPage: View {
             PostCellView(post: post, limitVerticalSpace: false)
                 .frame(maxWidth: .infinity,
                        alignment: .topLeading)
+                .onTapGesture {
+                    self.showWebView = true
+                }
             
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
@@ -65,6 +69,9 @@ struct PostViewPage: View {
         .padding(.horizontal)
         .onAppear {
             Task { await fetchComments() }
+        }
+        .fullScreenCover(isPresented: $showWebView) {
+            WebView(url: URL(string: post.url)!)
         }
     }
     
