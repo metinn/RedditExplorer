@@ -14,6 +14,9 @@ struct PostViewPage: View {
     @State var collapsedComments: [String] = []
     @State private var showWebView = false
     
+    @State var showImageViewer: Bool = false
+    @State var selectedImageURL: String = ""
+    
     func fetchComments() {
         Task {
             do {
@@ -45,12 +48,17 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
-            PostCellView(post: post, limitVerticalSpace: false)
-                .frame(maxWidth: .infinity,
-                       alignment: .topLeading)
-                .onTapGesture {
-                    self.showWebView = true
+            PostCellView(post: post, limitVerticalSpace: false) { imageUrl in
+                withAnimation {
+                    selectedImageURL = imageUrl
+                    showImageViewer = true
                 }
+            }
+            .frame(maxWidth: .infinity,
+                   alignment: .topLeading)
+            .onTapGesture {
+                self.showWebView = true
+            }
             
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
@@ -70,9 +78,15 @@ struct PostViewPage: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(showImageViewer)
         .padding(.horizontal)
         .onAppear {
             fetchComments()
+        }
+        .overlay {
+            if showImageViewer {
+                ImageViewer(imageUrl: selectedImageURL, showImageViewer: $showImageViewer)
+            }
         }
         .fullScreenCover(isPresented: $showWebView) {
             WebView(url: URL(string: post.url)!)

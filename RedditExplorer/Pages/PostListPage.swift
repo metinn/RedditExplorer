@@ -14,6 +14,9 @@ struct PostListPage: View {
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
     
+    @State var showImageViewer: Bool = false
+    @State var selectedImageURL: String = ""
+    
     func fetchNextPosts() {
         Task {
             do {
@@ -40,12 +43,22 @@ struct PostListPage: View {
         .onAppear {
             fetchNextPosts()
         }
+        .overlay {
+            if showImageViewer {
+                ImageViewer(imageUrl: selectedImageURL, showImageViewer: $showImageViewer)
+            }
+        }
     }
     
     func buildPostCell(_ post: Post) -> some View {
         return VStack {
             NavigationLink(destination: PostViewPage(post: post)) {
-                PostCellView(post: post, limitVerticalSpace: true)
+                PostCellView(post: post, limitVerticalSpace: true) { imageUrl in
+                    withAnimation {
+                        selectedImageURL = imageUrl
+                        showImageViewer = true
+                    }
+                }
                     .padding(.horizontal)
                     .onAppear {
                         if posts.last?.name == post.name {

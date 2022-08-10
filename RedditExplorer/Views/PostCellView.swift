@@ -11,6 +11,7 @@ import CachedAsyncImage
 struct PostCellView: View {
     let post: Post
     let limitVerticalSpace: Bool
+    let onImageTapped: (String)->Void
     
     let VerticalSpace: CGFloat = 6
     
@@ -30,6 +31,10 @@ struct PostCellView: View {
                         .resizable()
                         .scaledToFill()
                         .frame(maxHeight: limitVerticalSpace ? 300 : .infinity)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            onImageTapped(imageUrl.absoluteString)
+                        }
                 } placeholder: {
                     ProgressView()
                 }
@@ -63,12 +68,14 @@ struct PostCellView: View {
                 }
             }
         }
+        .contentShape(Rectangle())
         .padding(.vertical, VerticalSpace)
     }
 }
 
 struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
-        PostCellView(post: samplePost(), limitVerticalSpace: true)
+        PostCellView(post: samplePost(), limitVerticalSpace: true) { _ in
+        }
     }
 }
