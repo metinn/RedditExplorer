@@ -9,17 +9,19 @@ import SwiftUI
 
 struct PostViewPage: View {
     let post: Post
-    let api: RedditAPIProtocol = RedditAPI.shared
+    var api: RedditAPIProtocol.Type = RedditAPI.self
     @State var commentList: [Comment]?
     @State var collapsedComments: [String] = []
     @State private var showWebView = false
     
-    func fetchComments() async {
-        do {
-            self.commentList = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: nil)
-            
-        } catch let err {
-            print("Error", err.localizedDescription)
+    func fetchComments() {
+        Task {
+            do {
+                self.commentList = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: nil)
+                
+            } catch let err {
+                print("Error", err.localizedDescription)
+            }
         }
     }
     
@@ -70,7 +72,7 @@ struct PostViewPage: View {
         .navigationBarTitleDisplayMode(.inline)
         .padding(.horizontal)
         .onAppear {
-            Task { await fetchComments() }
+            fetchComments()
         }
         .fullScreenCover(isPresented: $showWebView) {
             WebView(url: URL(string: post.url)!)

@@ -10,16 +10,18 @@ import CryptoKit
 import CachedAsyncImage
 
 struct PostListPage: View {
-    let api: RedditAPIProtocol = RedditAPI.shared
+    var api: RedditAPIProtocol.Type = RedditAPI.self
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
     
-    func fetchNextPosts() async {
-        do {
-            let newPosts = try await api.getHotPosts(after: posts.last?.name, limit: 10)
-            posts.append(contentsOf: newPosts)
-        } catch let err {
-            print("Error: \(err.localizedDescription)")
+    func fetchNextPosts() {
+        Task {
+            do {
+                let newPosts = try await api.getHotPosts(after: posts.last?.name, limit: 10)
+                posts.append(contentsOf: newPosts)
+            } catch let err {
+                print("Error: \(err.localizedDescription)")
+            }
         }
     }
     
@@ -36,7 +38,7 @@ struct PostListPage: View {
         }
         .navigationViewStyle(.stack)
         .onAppear {
-            Task { await fetchNextPosts() }
+            fetchNextPosts()
         }
     }
     
@@ -47,7 +49,7 @@ struct PostListPage: View {
                     .padding(.horizontal)
                     .onAppear {
                         if posts.last?.name == post.name {
-                            Task { await fetchNextPosts() }
+                            fetchNextPosts()
                         }
                     }
             }.buttonStyle(PlainButtonStyle())

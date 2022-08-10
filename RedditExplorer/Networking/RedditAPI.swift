@@ -8,16 +8,14 @@
 import Foundation
 
 protocol RedditAPIProtocol {
-    func getHotPosts(after: String?, limit: Int?) async throws -> [Post]
-    func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
+    static func getHotPosts(after: String?, limit: Int?) async throws -> [Post]
+    static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
 }
 
 class RedditAPI: RedditAPIProtocol {
-    static let shared = RedditAPI()
+    static let baseUrl = "https://www.reddit.com"
     
-    let baseUrl = "https://www.reddit.com"
-    
-    func getHotPosts(after: String?, limit: Int?) async throws -> [Post] {
+    static func getHotPosts(after: String?, limit: Int?) async throws -> [Post] {
         // Url creation
         let params = ["raw_json": "1",
                       "after": after,
@@ -40,7 +38,7 @@ class RedditAPI: RedditAPIProtocol {
         return listing.children.compactMap { $0.data as? Post }
     }
     
-    func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment] {
+    static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment] {
         let url = buildUrl(path: "/r/\(subreddit)/comments/\(id).json", params: ["comment": commentId])
         
         let (data, response) = try await URLSession.shared.data(from: url)
@@ -59,7 +57,7 @@ class RedditAPI: RedditAPIProtocol {
 }
 
 extension RedditAPI {
-    private func buildUrl(path: String, params: [String: String?]? = nil) -> URL {
+    private static func buildUrl(path: String, params: [String: String?]? = nil) -> URL {
         var urlComp = URLComponents(string: baseUrl + path)!
         
         if let params = params {
