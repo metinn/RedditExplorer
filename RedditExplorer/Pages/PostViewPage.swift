@@ -60,8 +60,10 @@ struct PostViewPage: View {
             }
             
             if let comments = commentList {
-                ForEach(comments, id: \.id) { comment in
-                    buildComment(comment: comment, depth: 0, topParentId: comment.id)
+                LazyVStack {
+                    ForEach(comments, id: \.id) { comment in
+                        buildComment(comment: comment, depth: 0, topParentId: comment.id)
+                    }
                 }
             }
         }

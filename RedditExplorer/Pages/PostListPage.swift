@@ -25,22 +25,34 @@ struct PostListPage: View {
     
     var body: some View {
         NavigationView {
-            List(posts, id: \.id) { post in
-                NavigationLink(destination: PostViewPage(post: post)) {
-                    PostCellView(post: post, limitVerticalSpace: true)
-                        .onAppear {
-                            if posts.last?.name == post.name {
-                                Task { await fetchNextPosts() }
-                            }
-                        }
+            ScrollView{
+                LazyVStack {
+                    ForEach(posts, id: \.id) { post in
+                        buildPostCell(post)
+                    }
                 }
             }
-            .listStyle(InsetListStyle())
             .navigationBarTitle("Reddit")
         }
         .navigationViewStyle(.stack)
         .onAppear {
             Task { await fetchNextPosts() }
+        }
+    }
+    
+    func buildPostCell(_ post: Post) -> some View {
+        return VStack {
+            NavigationLink(destination: PostViewPage(post: post)) {
+                PostCellView(post: post, limitVerticalSpace: true)
+                    .padding(.horizontal)
+                    .onAppear {
+                        if posts.last?.name == post.name {
+                            Task { await fetchNextPosts() }
+                        }
+                    }
+            }.buttonStyle(PlainButtonStyle())
+            
+            Divider().padding(.zero)
         }
     }
 }
