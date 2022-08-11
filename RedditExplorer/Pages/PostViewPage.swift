@@ -48,7 +48,7 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
-            PostCellView(post: post, limitVerticalSpace: false) { imageUrl in
+            PostCellView(post: post, limitVerticalSpace: false, autoPlayVideo: true) { imageUrl in
                 withAnimation {
                     selectedImageURL = imageUrl
                     showImageViewer = true
@@ -56,8 +56,14 @@ struct PostViewPage: View {
             }
             .frame(maxWidth: .infinity,
                    alignment: .topLeading)
-            .onTapGesture {
+            
+            Button {
                 self.showWebView = true
+            } label: {
+                Text("Open Link")
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .border(.blue, width: 1)
             }
             
             RoundedRectangle(cornerRadius: 1.5)
