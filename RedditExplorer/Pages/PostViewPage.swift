@@ -85,7 +85,8 @@ struct PostViewPage: View {
         }
         .overlay {
             if showImageViewer {
-                ImageViewer(imageUrl: selectedImageURL, showImageViewer: $showImageViewer)
+                ImageViewer(vm: ImageViewerViewModel(imageUrl: selectedImageURL),
+                            showImageViewer: $showImageViewer)
             }
         }
         .fullScreenCover(isPresented: $showWebView) {
