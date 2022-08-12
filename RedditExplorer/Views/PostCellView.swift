@@ -108,12 +108,14 @@ struct PostCellView: View {
     }
 }
 
+#if DEBUG
 struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
         PostCellView(post: samplePost(), limitVerticalSpace: true) { _ in
         }
     }
 }
+#endif
 
 extension View {
     @ViewBuilder

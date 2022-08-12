@@ -95,7 +95,7 @@ struct PostViewPage: View {
                             showImageViewer: $showImageViewer)
             }
         }
-        .fullScreenCover(isPresented: $showWebView) {
+        .sheet(isPresented: $showWebView) {
             WebView(url: URL(string: post.url)!)
         }
     }
@@ -144,8 +144,10 @@ struct PostViewPage: View {
     }
 }
 
+#if DEBUG
 struct PostView_Previews: PreviewProvider {
     static var previews: some View {
         PostViewPage(post: samplePost())
     }
 }
+#endif

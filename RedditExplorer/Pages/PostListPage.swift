@@ -72,6 +72,7 @@ struct PostListPage: View {
     }
 }
 
+#if DEBUG
 struct PostList_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
@@ -80,3 +81,4 @@ struct PostList_Previews: PreviewProvider {
         }
     }
 }
+#endif
