@@ -38,6 +38,7 @@ struct PostCellView: View {
                 PostHeaderView(post: post)
                 Spacer()
             }
+            .padding(.horizontal)
             
             // Media Preview
             if autoPlayVideo && post.is_video, let video = post.media?.reddit_video {
@@ -100,7 +101,7 @@ struct PostCellView: View {
                             .cornerRadius(5.0)
                     }
                 }
-            }
+            }.padding(.horizontal)
         }
         .contentShape(Rectangle())
         .padding(.vertical, VerticalSpace)

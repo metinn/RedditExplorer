@@ -11,31 +11,23 @@ struct PostDataView: View {
     @Environment(\.colorScheme) var currentMode
     @State var post: Post
     
-    let SpaceIconText: CGFloat = 1
-    let SpaceIconGroup: CGFloat = 10
-    
     var body: some View {
-        HStack(spacing: 0) {
-            Group {
+        HStack(spacing: Constants.Space.IconGroup) {
+            
+            HStack(spacing: Constants.Space.IconText) {
                 Image(systemName: "arrow.up")
-                    .padding(.trailing, SpaceIconText)
                 Text("\(post.ups)")
-                    .padding(.trailing, SpaceIconGroup)
             }
             .font(.footnote)
             
-            Group {
+            HStack(spacing: Constants.Space.IconText) {
                 Image(systemName: "percent")
-                    .padding(.trailing, SpaceIconText)
-
                 Text(String(format: "%2.0f", post.upvote_ratio * 100))
-                    .padding(.trailing, SpaceIconGroup)
             }
             .font(.caption)
             
-            Group {
+            HStack(spacing: Constants.Space.IconText) {
                 Image(systemName: "text.bubble")
-                    .padding(.trailing, SpaceIconText)
                 Text(String(format: "%i", post.num_comments))
             }
             .font(.footnote)

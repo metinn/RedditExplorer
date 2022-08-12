@@ -57,6 +57,7 @@ struct PostViewPage: View {
             .frame(maxWidth: .infinity,
                    alignment: .topLeading)
             
+            // Link button
             Button {
                 self.showWebView = true
             } label: {
@@ -65,18 +66,18 @@ struct PostViewPage: View {
                     .frame(maxWidth: .infinity)
                     .border(.blue, width: 1)
             }
+            .padding(.horizontal)
             
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
                 .frame(height: 1)
-                .padding(.bottom, 5)
             
             if commentList == nil {
                 ProgressView()
             }
             
             if let comments = commentList {
-                LazyVStack {
+                LazyVStack(spacing: 0) {
                     ForEach(comments, id: \.id) { comment in
                         buildComment(comment: comment, depth: 0, topParentId: comment.id)
                     }
@@ -85,7 +86,6 @@ struct PostViewPage: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarHidden(showImageViewer)
-        .padding(.horizontal)
         .onAppear {
             fetchComments()
         }
@@ -122,7 +122,7 @@ struct PostViewPage: View {
             return AnyView(commentView)
         }
         
-        return AnyView(VStack {
+        return AnyView(VStack(spacing: 0) {
             commentView
             
             ForEach(replies.children, id: \.data.id)  { replyObject in

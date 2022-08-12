@@ -60,12 +60,11 @@ struct PostListPage: View {
                         showImageViewer = true
                     }
                 }
-                    .padding(.horizontal)
-                    .onAppear {
-                        if posts.last?.name == post.name {
-                            fetchNextPosts()
-                        }
+                .onAppear {
+                    if posts.last?.name == post.name {
+                        fetchNextPosts()
                     }
+                }
             }.buttonStyle(PlainButtonStyle())
             
             Divider().padding(.zero)

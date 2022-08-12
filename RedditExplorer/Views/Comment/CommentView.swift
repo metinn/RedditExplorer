@@ -23,15 +23,20 @@ struct CommentView: View {
     
     var body: some View {
         CommentCell(depth: depth, isCollapsed: isCollapsed) {
-            HStack {
-                authorText
-                Image(systemName: "arrow.up")
-                Text("\(comment.score)")
+            VStack(alignment: .leading, spacing: 0) {
+                HStack(spacing: Constants.Space.IconGroup) {
+                    authorText
+                    HStack(spacing: Constants.Space.IconText) {
+                        Image(systemName: "arrow.up")
+                        Text("\(comment.score)")
+                    }
+                }
+                .font(.caption)
+                .opacity(0.75)
+                
+                Text(isCollapsed ? "" : comment.body)
             }
-            .font(.caption)
-            .opacity(0.75)
-            
-            Text(isCollapsed ? "" : comment.body)
+            .padding(.vertical, 6)
         }
     }
 }
@@ -40,6 +45,9 @@ struct CommentView_Previews: PreviewProvider {
     static var previews: some View {
         return Group {
             CommentView(comment: Comment(id: UUID().uuidString, author: "you", score: 122, body: "A Comment", replies: nil), postAuthor: "me", depth: 0, isCollapsed: false)
+                .previewLayout(.sizeThatFits)
+            
+            CommentView(comment: Comment(id: UUID().uuidString, author: "you", score: 76, body: "A Comment", replies: nil), postAuthor: "me", depth: 2, isCollapsed: false)
                 .previewLayout(.sizeThatFits)
         }
     }

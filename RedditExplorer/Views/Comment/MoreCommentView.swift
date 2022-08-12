@@ -15,6 +15,7 @@ struct MoreCommentView: View {
         CommentCell(depth: depth, isCollapsed: false) {
             Text("\(moreComment.count) more comment")
                 .foregroundColor(.blue)
+                .padding(.vertical, 6)
         }
     }
 }
