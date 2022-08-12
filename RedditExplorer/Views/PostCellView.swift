@@ -85,7 +85,7 @@ struct PostCellView: View {
                     if !post.selftext.isEmpty {
                         Text(post.selftext)
                             .font(.footnote)
-                            .lineLimit(2)
+                            .lineLimit(limitVerticalSpace ? 2 : nil)
                     }
                     
                     PostDataView(post: post)
