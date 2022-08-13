@@ -12,7 +12,7 @@ struct CommentCell<Content>: View where Content : View {
     let isCollapsed: Bool
     @ViewBuilder var content: () -> Content
     
-    let CommentDepth = 8
+    let CommentDepth = 10
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {

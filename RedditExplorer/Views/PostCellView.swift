@@ -28,6 +28,7 @@ struct PostCellView: View {
     @State var showVideoFull = false
     
     let VerticalSpace: CGFloat = 6
+    let ImageHeight: CGFloat = 300
     
     @ObservedObject var vm = PostCellViewModel()
     
@@ -54,7 +55,7 @@ struct PostCellView: View {
                     resultImage
                         .resizable()
                         .scaledToFill()
-                        .frame(maxHeight: limitVerticalSpace ? 300 : .infinity)
+                        .frame(maxHeight: limitVerticalSpace ? ImageHeight : UIScreen.main.bounds.height - 200)
                         .contentShape(Rectangle())
                         .ifCondition(!post.is_video) { view in
                             view.onTapGesture {
@@ -71,7 +72,11 @@ struct PostCellView: View {
                             }
                         }
                 } placeholder: {
-                    ProgressView()
+                    ZStack {
+                        Color.gray
+                            .frame(height: ImageHeight)
+                        ProgressView()
+                    }
                 }
                 .clipped()
             }
@@ -80,11 +85,11 @@ struct PostCellView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: VerticalSpace) {
                     Text(post.title)
-                        .font(.body)
+                        .font(.headline)
                     
                     if !post.selftext.isEmpty {
                         Text(post.selftext)
-                            .font(.footnote)
+                            .font(.body)
                             .lineLimit(limitVerticalSpace ? 2 : nil)
                     }
                     
@@ -111,7 +116,7 @@ struct PostCellView: View {
 #if DEBUG
 struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
-        PostCellView(post: samplePost(), limitVerticalSpace: true) { _ in
+        PostCellView(post: samplePost(), limitVerticalSpace: false) { _ in
         }
     }
 }

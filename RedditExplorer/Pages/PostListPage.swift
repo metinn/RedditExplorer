@@ -67,7 +67,10 @@ struct PostListPage: View {
                 }
             }.buttonStyle(PlainButtonStyle())
             
-            Divider().padding(.zero)
+            //Divider
+            Color.gray
+                .opacity(0.2)
+                .frame(height: 10)
         }
     }
 }

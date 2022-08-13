@@ -54,8 +54,6 @@ struct PostViewPage: View {
                     showImageViewer = true
                 }
             }
-            .frame(maxWidth: .infinity,
-                   alignment: .topLeading)
             
             // Link button
             Button {
