@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		633C5ECB28A8FD4B00FEC180 /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633C5ECA28A8FD4B00FEC180 /* HomePage.swift */; };
 		634C486427F735A300223099 /* PostDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634C486327F735A300223099 /* PostDataView.swift */; };
 		636D719428972A2400354E89 /* MoreCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D719328972A2400354E89 /* MoreCommentView.swift */; };
 		636D719628972A5800354E89 /* CommentCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D719528972A5800354E89 /* CommentCell.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		633C5ECA28A8FD4B00FEC180 /* HomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
 		634C486327F735A300223099 /* PostDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDataView.swift; sourceTree = "<group>"; };
 		636D719328972A2400354E89 /* MoreCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreCommentView.swift; sourceTree = "<group>"; };
 		636D719528972A5800354E89 /* CommentCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentCell.swift; sourceTree = "<group>"; };
@@ -149,8 +151,8 @@
 				63ED944F28101BD000061A22 /* Pages */,
 				6361A37227F7334900104617 /* Views */,
 				63CCAD5D28A7B3C000C24400 /* Modifiers */,
-				63EBEF0327E763EC00DB018D /* Models */,
 				63EBEEF727E64AE300DB018D /* Networking */,
+				63EBEF0327E763EC00DB018D /* Models */,
 				63ED94502816BCC000061A22 /* Utils */,
 				63EBEED127E6486C00DB018D /* Assets.xcassets */,
 				63EBEED327E6486C00DB018D /* Preview Content */,
@@ -197,6 +199,7 @@
 		63ED944F28101BD000061A22 /* Pages */ = {
 			isa = PBXGroup;
 			children = (
+				633C5ECA28A8FD4B00FEC180 /* HomePage.swift */,
 				63EBEECF27E6486900DB018D /* PostListPage.swift */,
 				63ED944D2810196800061A22 /* PostViewPage.swift */,
 			);
@@ -319,6 +322,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				634C486427F735A300223099 /* PostDataView.swift in Sources */,
+				633C5ECB28A8FD4B00FEC180 /* HomePage.swift in Sources */,
 				63CCAD5828A683E000C24400 /* Constants.swift in Sources */,
 				636D719428972A2400354E89 /* MoreCommentView.swift in Sources */,
 				63EA7A3C288748E5007A6263 /* CommentView.swift in Sources */,

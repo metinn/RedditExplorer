@@ -27,13 +27,13 @@ struct OnRefresh: ViewModifier {
                                     value: geo.frame(in: .global).origin.y)
                 }
             })
-            .onPreferenceChange(OffsetKey.self) {
+            .onPreferenceChange(OffsetKey.self) { originY in
                 // TODO: Fragile! Taking the first value after view appearred
                 if isViewApperred && startOffset == nil {
-                    startOffset = $0
+                    startOffset = originY
                 }
 
-                if let startOffset = startOffset, (startOffset - $0) < -100 {
+                if let startOffset = startOffset, (originY - startOffset) > 100 {
                     if !isRefreshing {
                         isRefreshing = true
                         Task {
@@ -47,6 +47,10 @@ struct OnRefresh: ViewModifier {
             }
             .onAppear {
                 isViewApperred = true
+            }
+            .onDisappear {
+                isViewApperred = false
+                startOffset = nil
             }
     }
     

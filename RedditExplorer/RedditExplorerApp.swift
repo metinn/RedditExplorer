@@ -11,7 +11,7 @@ import SwiftUI
 struct RedditExplorerApp: App {
     var body: some Scene {
         WindowGroup {
-            PostListPage()
+            HomePage()
         }
     }
 }

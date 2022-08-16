@@ -10,6 +10,8 @@ import CryptoKit
 import CachedAsyncImage
 
 struct PostListPage: View {
+    let list: SortBy
+    
     var api: RedditAPIProtocol.Type = RedditAPI.self
     @Environment(\.colorScheme) var currentMode
     @State var posts: [Post] = []
@@ -19,7 +21,7 @@ struct PostListPage: View {
     
     func fetchNextPosts() async {
         do {
-            let newPosts = try await api.getHotPosts(after: posts.last?.name, limit: 10)
+            let newPosts = try await api.getPosts(list, after: posts.last?.name, limit: 10)
             posts.append(contentsOf: newPosts)
         } catch let err {
             print("Error: \(err.localizedDescription)")
@@ -27,30 +29,27 @@ struct PostListPage: View {
     }
     
     var body: some View {
-        NavigationView {
-            ScrollView{
-                LazyVStack {
-                    ForEach(posts, id: \.id) { post in
-                        buildPostCell(post)
-                    }
-                }
-                .onRefresh {
-                    posts = []
-                    // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
-                    try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
-                    await fetchNextPosts()
+        ScrollView{
+            LazyVStack {
+                ForEach(posts, id: \.id) { post in
+                    buildPostCell(post)
                 }
             }
-            .navigationBarTitle("Reddit")
+            .onRefresh {
+                posts = []
+                // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
+                try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
+                await fetchNextPosts()
+            }
         }
-        .navigationViewStyle(.stack)
+        .fullScreenCover(isPresented: $showImageViewer) {
+            ImageViewer(vm: ImageViewerViewModel(imageUrl: selectedImageURL),
+                        showImageViewer: $showImageViewer)
+            .background(TransparentBackground())
+        }
         .onAppear {
-            Task { await fetchNextPosts() }
-        }
-        .overlay {
-            if showImageViewer {
-                ImageViewer(vm: ImageViewerViewModel(imageUrl: selectedImageURL),
-                            showImageViewer: $showImageViewer)
+            if posts.isEmpty {
+                Task { await fetchNextPosts() }
             }
         }
     }
@@ -79,11 +78,25 @@ struct PostListPage: View {
     }
 }
 
+// TODO: seems fragile, better way?
+// https://stackoverflow.com/a/72124662/1423048
+struct TransparentBackground: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        DispatchQueue.main.async {
+            view.superview?.superview?.backgroundColor = .clear
+        }
+        return view
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {}
+}
+
 #if DEBUG
 struct PostList_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
-            PostListPage(posts: [samplePost()])
+            PostListPage(list: .hot, posts: [samplePost()])
                 .preferredColorScheme($0)
         }
     }
