@@ -28,7 +28,7 @@ class ImageViewerViewModel: ObservableObject {
                 let (data, _) = try? await URLSession.shared.data(from: url),
                 let newImage = UIImage(data: data)
             else {
-                loadingState = .failure
+                DispatchQueue.main.async { self.loadingState = .failure }
                 return
             }
 
@@ -43,7 +43,7 @@ class ImageViewerViewModel: ObservableObject {
 }
 
 struct ImageViewer: View {
-    @ObservedObject var vm: ImageViewerViewModel
+    @StateObject var vm: ImageViewerViewModel
     @Binding var showImageViewer: Bool
     
     @State var imageOffset: CGSize = .zero

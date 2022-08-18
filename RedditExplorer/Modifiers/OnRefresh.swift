@@ -19,11 +19,11 @@ struct OnRefresh: ViewModifier {
             .background(GeometryReader { geo in
                 ZStack {
                     ProgressView()
-                            .frame(height: 50, alignment: .center)
-                            .frame(maxWidth: .infinity)
-                            .offset(y: -50)
-                            .opacity(isRefreshing ? 1 : 0)
-                            .preference(key: OffsetKey.self,
+                        .frame(height: 50, alignment: .center)
+                        .frame(maxWidth: .infinity)
+                        .offset(y: -50)
+                        .opacity(isRefreshing ? 1 : 0)
+                        .preference(key: OffsetKey.self,
                                     value: geo.frame(in: .global).origin.y)
                 }
             })

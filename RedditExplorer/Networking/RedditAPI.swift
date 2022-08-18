@@ -8,20 +8,25 @@
 import Foundation
 
 protocol RedditAPIProtocol {
-    static func getPosts(_ sortBy: SortBy, after: String?, limit: Int?) async throws -> [Post]
+    static func getPosts(_ sortBy: SortBy, subreddit: String?, after: String?, limit: Int?) async throws -> [Post]
     static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
 }
 
 class RedditAPI: RedditAPIProtocol {
     static let baseUrl = "https://www.reddit.com"
     
-    static func getPosts(_ sortBy: SortBy, after: String?, limit: Int?) async throws -> [Post] {
+    static func getPosts(_ sortBy: SortBy, subreddit: String?, after: String?, limit: Int?) async throws -> [Post] {
         // Url creation
         let params = ["raw_json": "1",
                       "after": after,
                       "limit": limit == nil ? nil : String(limit!)]
         
-        let url = buildUrl(path: "/\(sortBy.rawValue).json", params: params)
+        var path = "/\(sortBy.rawValue).json"
+        if let subreddit = subreddit {
+            path = "/r/" + subreddit + path
+        }
+        
+        let url = buildUrl(path: path, params: params)
 
         // making call
         let (data, response) = try await URLSession.shared.data(from: url)

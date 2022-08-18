@@ -7,24 +7,43 @@
 
 import SwiftUI
 
+class HomeViewModel {
+    enum Tab: Hashable {
+        case list(SortBy)
+        case subreddits
+        
+        var title: String {
+            switch self {
+            case .list(let sortBy):
+                return sortBy.rawValue
+            case .subreddits:
+                return "Subreddits"
+            }
+        }
+    }
+}
+
 struct HomePage: View {
-    let tabList: [SortBy] = [.hot, .top, .rising]
-    @State var selectedTabs = Set<SortBy>()
+    let tabList: [HomeViewModel.Tab] = [
+        .list(.hot),
+        .list(.top),
+        .list(.rising),
+        .subreddits]
+    @State var selectedTab: HomeViewModel.Tab = .list(.hot)
     
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
                     // Tabs
-                    TabView {
+                    TabView(selection: $selectedTab) {
                         ForEach(tabList, id: \.self) { tab in
-                            PostListPage(list: tab)
-                                .onAppear {
-                                    selectedTabs.insert(tab)
-                                }
-                                .onDisappear {
-                                    selectedTabs.remove(tab)
-                                }
+                            switch tab {
+                            case .list(let sortBy):
+                                PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
+                            case .subreddits:
+                                SubredditsPage()
+                            }
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -32,7 +51,6 @@ struct HomePage: View {
                     // Tab bar,
                     VStack {
                         Spacer()
-                        
                         tabBar(geometry)
                     }
                 }
@@ -46,8 +64,11 @@ struct HomePage: View {
     func tabBar(_ geometry: GeometryProxy) -> some View {
         return HStack {
             ForEach(tabList, id: \.self) { tab in
-                Text(tab.rawValue)
-                    .opacity(selectedTabs.contains(tab) ? 1.0 : 0.4)
+                Text(tab.title)
+                    .opacity(selectedTab == tab ? 1.0 : 0.4)
+                    .onTapGesture {
+                        selectedTab = tab
+                    }
             }
         }
         .padding()

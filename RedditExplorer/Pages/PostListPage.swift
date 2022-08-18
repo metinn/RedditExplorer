@@ -9,47 +9,64 @@ import SwiftUI
 import CryptoKit
 import CachedAsyncImage
 
-struct PostListPage: View {
-    let list: SortBy
+class PostListViewModel: ObservableObject {
+    let sortBy: SortBy
+    let subReddit: String?
     
-    var api: RedditAPIProtocol.Type = RedditAPI.self
-    @Environment(\.colorScheme) var currentMode
-    @State var posts: [Post] = []
+    private var api: RedditAPIProtocol.Type = RedditAPI.self
     
-    @State var showImageViewer: Bool = false
-    @State var selectedImageURL: String = ""
+    var selectedImageURL: String = ""
+    @Published var showImageViewer: Bool = false
+    @Published var posts: [Post] = []
+    
+    init(sortBy: SortBy, subReddit: String?) {
+        self.sortBy = sortBy
+        self.subReddit = subReddit
+    }
     
     func fetchNextPosts() async {
         do {
-            let newPosts = try await api.getPosts(list, after: posts.last?.name, limit: 10)
-            posts.append(contentsOf: newPosts)
+            let newPosts = try await api.getPosts(sortBy, subreddit: subReddit, after: posts.last?.name, limit: 10)
+            
+            DispatchQueue.main.async {
+                self.posts.append(contentsOf: newPosts)
+            }
         } catch let err {
             print("Error: \(err.localizedDescription)")
         }
     }
     
+    func refreshPosts() async {
+        posts = []
+        // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
+        try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
+        await fetchNextPosts()
+    }
+}
+
+struct PostListPage: View {
+    @Environment(\.colorScheme) var currentMode
+    @StateObject var vm: PostListViewModel
+    
     var body: some View {
-        ScrollView{
+        ScrollView {
             LazyVStack {
-                ForEach(posts, id: \.id) { post in
+                ForEach(vm.posts, id: \.id) { post in
                     buildPostCell(post)
                 }
             }
             .onRefresh {
-                posts = []
-                // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
-                try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
-                await fetchNextPosts()
+                await vm.refreshPosts()
             }
         }
-        .fullScreenCover(isPresented: $showImageViewer) {
-            ImageViewer(vm: ImageViewerViewModel(imageUrl: selectedImageURL),
-                        showImageViewer: $showImageViewer)
+        .fullScreenCover(isPresented: $vm.showImageViewer) {
+            ImageViewer(vm: ImageViewerViewModel(imageUrl: vm.selectedImageURL),
+                        showImageViewer: $vm.showImageViewer)
             .background(TransparentBackground())
         }
         .onAppear {
-            if posts.isEmpty {
-                Task { await fetchNextPosts() }
+            if vm.posts.isEmpty {
+                Task { await vm.fetchNextPosts() }
             }
         }
     }
@@ -59,13 +76,13 @@ struct PostListPage: View {
             NavigationLink(destination: PostViewPage(post: post)) {
                 PostCellView(post: post, limitVerticalSpace: true) { imageUrl in
                     withAnimation {
-                        selectedImageURL = imageUrl
-                        showImageViewer = true
+                        vm.selectedImageURL = imageUrl
+                        vm.showImageViewer = true
                     }
                 }
                 .onAppear {
-                    if posts.last?.name == post.name {
-                        Task { await fetchNextPosts() }
+                    if vm.posts.last?.name == post.name {
+                        Task { await vm.fetchNextPosts() }
                     }
                 }
             }.buttonStyle(PlainButtonStyle())
@@ -96,7 +113,7 @@ struct TransparentBackground: UIViewRepresentable {
 struct PostList_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
-            PostListPage(list: .hot, posts: [samplePost()])
+            PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: nil))
                 .preferredColorScheme($0)
         }
     }

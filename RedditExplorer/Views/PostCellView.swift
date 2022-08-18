@@ -30,7 +30,7 @@ struct PostCellView: View {
     let VerticalSpace: CGFloat = 6
     let ImageHeight: CGFloat = 300
     
-    @ObservedObject var vm = PostCellViewModel()
+    @StateObject var vm = PostCellViewModel()
     
     var body: some View {
         return VStack(spacing: VerticalSpace) {

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		630589B228AEE151006F7ABF /* SubredditsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630589B128AEE151006F7ABF /* SubredditsPage.swift */; };
 		633C5ECB28A8FD4B00FEC180 /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633C5ECA28A8FD4B00FEC180 /* HomePage.swift */; };
 		634C486427F735A300223099 /* PostDataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634C486327F735A300223099 /* PostDataView.swift */; };
 		636D719428972A2400354E89 /* MoreCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D719328972A2400354E89 /* MoreCommentView.swift */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		630589B128AEE151006F7ABF /* SubredditsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubredditsPage.swift; sourceTree = "<group>"; };
 		633C5ECA28A8FD4B00FEC180 /* HomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
 		634C486327F735A300223099 /* PostDataView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDataView.swift; sourceTree = "<group>"; };
 		636D719328972A2400354E89 /* MoreCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreCommentView.swift; sourceTree = "<group>"; };
@@ -202,6 +204,7 @@
 				633C5ECA28A8FD4B00FEC180 /* HomePage.swift */,
 				63EBEECF27E6486900DB018D /* PostListPage.swift */,
 				63ED944D2810196800061A22 /* PostViewPage.swift */,
+				630589B128AEE151006F7ABF /* SubredditsPage.swift */,
 			);
 			path = Pages;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				63A039822896800100B0C568 /* MoreComment.swift in Sources */,
 				63CCAD6128A7C30900C24400 /* OnRefresh.swift in Sources */,
 				63EBEF0A27E763EC00DB018D /* Post.swift in Sources */,
+				630589B228AEE151006F7ABF /* SubredditsPage.swift in Sources */,
 				63EBEF0827E763EC00DB018D /* SortBy.swift in Sources */,
 				63ED944E2810196800061A22 /* PostViewPage.swift in Sources */,
 				63EA7A4228A2F29D007A6263 /* WebView.swift in Sources */,
