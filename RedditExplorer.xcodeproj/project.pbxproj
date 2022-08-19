@@ -61,7 +61,7 @@
 		63E1D19B281ECF9D006177B8 /* PostCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCellView.swift; sourceTree = "<group>"; };
 		63EA7A3B288748E5007A6263 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		63EA7A4128A2F29D007A6263 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
-		63EBEECA27E6486900DB018D /* RedditExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedditExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		63EBEECA27E6486900DB018D /* RdD.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RdD.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63EBEECD27E6486900DB018D /* RedditExplorerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditExplorerApp.swift; sourceTree = "<group>"; };
 		63EBEECF27E6486900DB018D /* PostListPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostListPage.swift; sourceTree = "<group>"; };
 		63EBEED127E6486C00DB018D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -140,7 +140,7 @@
 		63EBEECB27E6486900DB018D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				63EBEECA27E6486900DB018D /* RedditExplorer.app */,
+				63EBEECA27E6486900DB018D /* RdD.app */,
 				63EBEEDA27E6486C00DB018D /* RedditExplorerTests.xctest */,
 			);
 			name = Products;
@@ -238,7 +238,7 @@
 				63E1D199281ECA4E006177B8 /* CachedAsyncImage */,
 			);
 			productName = RedditExplorer;
-			productReference = 63EBEECA27E6486900DB018D /* RedditExplorer.app */;
+			productReference = 63EBEECA27E6486900DB018D /* RdD.app */;
 			productType = "com.apple.product-type.application";
 		};
 		63EBEED927E6486C00DB018D /* RedditExplorerTests */ = {
@@ -505,9 +505,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.metinguler.RedditExplorer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.metinguler.Rdd;
+				PRODUCT_NAME = RdD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -534,9 +534,9 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.metinguler.RedditExplorer;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.metinguler.Rdd;
+				PRODUCT_NAME = RdD;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
