@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CryptoKit
 import CachedAsyncImage
 
 class PostListViewModel: ObservableObject {
@@ -67,12 +66,9 @@ struct PostListPage: View {
     
     func buildPostCell(_ post: Post) -> some View {
         return VStack {
-            NavigationLink(destination: PostViewPage(post: post)) {
+            NavigationLink(destination: PostViewPage(vm: PostViewViewModel(post: post))) {
                 PostCellView(post: post, limitVerticalSpace: true) { imageUrl in
-                    withAnimation {
-                        homeVM.selectedImageURL = imageUrl
-                        homeVM.showImageViewer = true
-                    }
+                    homeVM.showImage(imageUrl)
                 }
                 .onAppear {
                     if vm.posts.last?.name == post.name {

@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "63EBEEC927E6486900DB018D"
-               BuildableName = "RedditExplorer.app"
+               BuildableName = "RdD.app"
                BlueprintName = "RedditExplorer"
                ReferencedContainer = "container:RedditExplorer.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "63EBEEC927E6486900DB018D"
-            BuildableName = "RedditExplorer.app"
+            BuildableName = "RdD.app"
             BlueprintName = "RedditExplorer"
             ReferencedContainer = "container:RedditExplorer.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "63EBEEC927E6486900DB018D"
-            BuildableName = "RedditExplorer.app"
+            BuildableName = "RdD.app"
             BlueprintName = "RedditExplorer"
             ReferencedContainer = "container:RedditExplorer.xcodeproj">
          </BuildableReference>

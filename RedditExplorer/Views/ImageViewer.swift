@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import PDFKit
+import CachedAsyncImage
 
 extension CGSize {
     func divide(_ scale: CGFloat) -> CGSize {
@@ -47,7 +47,7 @@ struct ImageViewer: View {
                 .opacity(bgOpacity)
                 .ignoresSafeArea()
             
-            AsyncImage(url: URL(string: imageUrl)) { image in
+            CachedAsyncImage(url: URL(string: imageUrl)) { image in
                 image.resizable()
                     .aspectRatio(contentMode: .fit)
                     .opacity(bgOpacity)

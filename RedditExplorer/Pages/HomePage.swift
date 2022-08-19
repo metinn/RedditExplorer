@@ -31,6 +31,13 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
+    
+    func showImage(_ imageUrl: String) {
+        withAnimation {
+            selectedImageURL = imageUrl
+            showImageViewer = true
+        }
+    }
 }
 
 struct HomePage: View {
