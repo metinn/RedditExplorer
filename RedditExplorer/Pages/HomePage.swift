@@ -7,7 +7,17 @@
 
 import SwiftUI
 
-class HomeViewModel {
+class HomeViewModel: ObservableObject {
+    let tabList: [HomeViewModel.Tab] = [
+        .list(.hot),
+        .list(.top),
+        .list(.rising),
+        .subreddits]
+    @Published var selectedTab: HomeViewModel.Tab = .list(.hot)
+    
+    var selectedImageURL: String = ""
+    @Published var showImageViewer: Bool = false
+    
     enum Tab: Hashable {
         case list(SortBy)
         case subreddits
@@ -24,21 +34,16 @@ class HomeViewModel {
 }
 
 struct HomePage: View {
-    let tabList: [HomeViewModel.Tab] = [
-        .list(.hot),
-        .list(.top),
-        .list(.rising),
-        .subreddits]
     @Environment(\.colorScheme) var currentMode
-    @State var selectedTab: HomeViewModel.Tab = .list(.hot)
+    @StateObject var vm = HomeViewModel()
     
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 ZStack {
                     // Tabs
-                    TabView(selection: $selectedTab) {
-                        ForEach(tabList, id: \.self) { tab in
+                    TabView(selection: $vm.selectedTab) {
+                        ForEach(vm.tabList, id: \.self) { tab in
                             switch tab {
                             case .list(let sortBy):
                                 PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
@@ -60,15 +65,22 @@ struct HomePage: View {
             }
         }
         .navigationViewStyle(.stack)
+        .overlay {
+            if vm.showImageViewer {            
+                ImageViewer(imageUrl: vm.selectedImageURL,
+                            showImageViewer: $vm.showImageViewer)
+            }
+        }
+        .environmentObject(vm)
     }
     
     func tabBar(_ geometry: GeometryProxy) -> some View {
         return HStack {
-            ForEach(tabList, id: \.self) { tab in
+            ForEach(vm.tabList, id: \.self) { tab in
                 Text(tab.title)
-                    .opacity(selectedTab == tab ? 1.0 : 0.4)
+                    .opacity(vm.selectedTab == tab ? 1.0 : 0.4)
                     .onTapGesture {
-                        selectedTab = tab
+                        vm.selectedTab = tab
                     }
             }
         }

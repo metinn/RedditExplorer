@@ -14,8 +14,7 @@ struct PostViewPage: View {
     @State var collapsedComments: [String] = []
     @State private var showWebView = false
     
-    @State var showImageViewer: Bool = false
-    @State var selectedImageURL: String = ""
+    @EnvironmentObject var homeVM: HomeViewModel
     
     func fetchComments() {
         Task {
@@ -50,8 +49,8 @@ struct PostViewPage: View {
         ScrollView {
             PostCellView(post: post, limitVerticalSpace: false, autoPlayVideo: true) { imageUrl in
                 withAnimation {
-                    selectedImageURL = imageUrl
-                    showImageViewer = true
+                    homeVM.selectedImageURL = imageUrl
+                    homeVM.showImageViewer = true
                 }
             }
             
@@ -83,15 +82,8 @@ struct PostViewPage: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarHidden(showImageViewer)
         .onAppear {
             fetchComments()
-        }
-        .overlay {
-            if showImageViewer {
-                ImageViewer(vm: ImageViewerViewModel(imageUrl: selectedImageURL),
-                            showImageViewer: $showImageViewer)
-            }
         }
         .sheet(isPresented: $showWebView) {
             WebView(url: URL(string: post.url)!)

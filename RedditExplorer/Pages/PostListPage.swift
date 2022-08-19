@@ -15,8 +15,6 @@ class PostListViewModel: ObservableObject {
     
     private var api: RedditAPIProtocol.Type = RedditAPI.self
     
-    var selectedImageURL: String = ""
-    @Published var showImageViewer: Bool = false
     @Published var posts: [Post] = []
     
     init(sortBy: SortBy, subReddit: String?) {
@@ -47,6 +45,7 @@ class PostListViewModel: ObservableObject {
 struct PostListPage: View {
     @Environment(\.colorScheme) var currentMode
     @StateObject var vm: PostListViewModel
+    @EnvironmentObject var homeVM: HomeViewModel
     
     var body: some View {
         ScrollView {
@@ -58,11 +57,6 @@ struct PostListPage: View {
             .onRefresh {
                 await vm.refreshPosts()
             }
-        }
-        .fullScreenCover(isPresented: $vm.showImageViewer) {
-            ImageViewer(vm: ImageViewerViewModel(imageUrl: vm.selectedImageURL),
-                        showImageViewer: $vm.showImageViewer)
-            .background(TransparentBackground())
         }
         .onAppear {
             if vm.posts.isEmpty {
@@ -76,8 +70,8 @@ struct PostListPage: View {
             NavigationLink(destination: PostViewPage(post: post)) {
                 PostCellView(post: post, limitVerticalSpace: true) { imageUrl in
                     withAnimation {
-                        vm.selectedImageURL = imageUrl
-                        vm.showImageViewer = true
+                        homeVM.selectedImageURL = imageUrl
+                        homeVM.showImageViewer = true
                     }
                 }
                 .onAppear {
@@ -93,20 +87,6 @@ struct PostListPage: View {
                 .frame(height: 10)
         }
     }
-}
-
-// TODO: seems fragile, better way?
-// https://stackoverflow.com/a/72124662/1423048
-struct TransparentBackground: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        DispatchQueue.main.async {
-            view.superview?.superview?.backgroundColor = .clear
-        }
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
 #if DEBUG
