@@ -48,10 +48,6 @@ struct OnRefresh: ViewModifier {
             .onAppear {
                 isViewApperred = true
             }
-            .onDisappear {
-                isViewApperred = false
-                startOffset = nil
-            }
     }
     
     struct OffsetKey: PreferenceKey {

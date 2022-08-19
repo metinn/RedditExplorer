@@ -29,6 +29,7 @@ struct HomePage: View {
         .list(.top),
         .list(.rising),
         .subreddits]
+    @Environment(\.colorScheme) var currentMode
     @State var selectedTab: HomeViewModel.Tab = .list(.hot)
     
     var body: some View {
@@ -73,7 +74,7 @@ struct HomePage: View {
         }
         .padding()
         .frame(height: 40)
-        .background(.white)
+        .background(currentMode == .light ? .teal : .indigo)
         .cornerRadius(10)
         .shadow(radius: 10)
         .padding(.bottom, geometry.safeAreaInsets.bottom + 30)
