@@ -32,6 +32,20 @@ struct PostCellView: View {
     
     @StateObject var vm = PostCellViewModel()
     
+    func getPreviewImageUrls() -> [String] {
+        guard let preview = post.preview else { return [] }
+        
+        return preview.images.compactMap { imageSource in
+            imageSource.resolutions.filter { $0.width > 320 }
+                .sorted { $0.width > $1.width }
+                .last?.url
+        }
+    }
+    
+    func getOriginalImage() -> String? {
+        post.preview?.images.first?.source.url
+    }
+    
     var body: some View {
         return VStack(spacing: VerticalSpace) {
             // Header
@@ -48,9 +62,8 @@ struct PostCellView: View {
                     .onDisappear {
                         vm.player?.pause()
                     }
-
-            } else if let preview = post.preview,
-               let imageUrl = URL(string: preview.images[0].source.url) {
+                
+            } else if let imageUrl = URL(string: getPreviewImageUrls().first ?? "") {
                 CachedAsyncImage(url: imageUrl) { resultImage in
                     resultImage
                         .resizable()
@@ -59,7 +72,7 @@ struct PostCellView: View {
                         .contentShape(Rectangle())
                         .ifCondition(!post.is_video) { view in
                             view.onTapGesture {
-                                onImageTapped(imageUrl.absoluteString)
+                                onImageTapped(getOriginalImage() ?? "")
                             }
                         }
                         .overlay {
@@ -118,6 +131,7 @@ struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
         PostCellView(post: samplePost(), limitVerticalSpace: false) { _ in
         }
+        .previewLayout(.sizeThatFits)
     }
 }
 #endif
