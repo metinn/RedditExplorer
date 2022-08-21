@@ -67,9 +67,9 @@ struct PostListPage: View {
     func buildPostCell(_ post: Post) -> some View {
         return VStack {
             NavigationLink(destination: PostViewPage(vm: PostViewViewModel(post: post))) {
-                PostCellView(post: post, limitVerticalSpace: true) { imageUrl in
+                PostCellView(vm: PostCellViewModel(post: post, limitVerticalSpace: true) { imageUrl in
                     homeVM.showImage(imageUrl)
-                }
+                })
                 .onAppear {
                     if vm.posts.last?.name == post.name {
                         Task { await vm.fetchNextPosts() }

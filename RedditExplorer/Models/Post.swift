@@ -77,6 +77,10 @@ struct Post: RedditObject {
             let fallback_url: String
             let hls_url: String?
             let is_gif: Bool
+            
+            var aspectRatio: CGFloat {
+                CGFloat(width) / CGFloat(height)
+            }
         }
     }
 }

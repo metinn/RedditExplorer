@@ -57,9 +57,9 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
-            PostCellView(post: vm.post, limitVerticalSpace: false, autoPlayVideo: true) { imageUrl in
+            PostCellView(vm: PostCellViewModel(post: vm.post, limitVerticalSpace: false, expandedMode: true) { imageUrl in
                 homeVM.showImage(imageUrl)
-            }
+            })
             
             // Link button
             Button {
@@ -97,6 +97,8 @@ struct PostViewPage: View {
         }
     }
     
+    // TODO: Remove AnyView if possible (is anyview giving us performance hit?)
+    // WWDC21 Demystfiy swiftui 14:00 suggests adding @ViewBuilder but it does not work as long as it recursively calls its self
     func buildComment(comment: Comment, depth: Int, topParentId: String) -> AnyView {
         let collapsed = vm.isCollapsed(comment.id)
         
