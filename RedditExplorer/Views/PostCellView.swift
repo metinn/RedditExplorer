@@ -8,41 +8,64 @@
 import SwiftUI
 import CachedAsyncImage
 import AVKit
+import SwiftUIGIF
 
 class PostCellViewModel: ObservableObject {
-    var player: AVPlayer?
-    
     let post: Post
     let limitVerticalSpace: Bool
-    var expandedMode: Bool
     let onImageTapped: (String)->Void
     @Published var showVideoFullscreen = false
+    @Published var showWebView = false
     @Published var isVideoPlaying: Bool = false
     @Published var isVideoMuted: Bool = false
+    var player: AVPlayer? = nil
     
-    init(post: Post, limitVerticalSpace: Bool, expandedMode: Bool = false, onImageTapped: @escaping (String)->Void) {
+    @Published var gifData: Data? = nil
+    @Published var imageUrl: URL? = nil
+    
+    var isAKindOfVideo: Bool { post.videoUrl != nil || hasYoutubeLink }
+    var hasYoutubeLink: Bool { post.domain.contains("youtube.com") || post.domain.contains("youtu.be") }
+    
+    init(post: Post, limitVerticalSpace: Bool, onImageTapped: @escaping (String)->Void) {
         self.post = post
         self.limitVerticalSpace = limitVerticalSpace
-        self.expandedMode = expandedMode
         self.onImageTapped = onImageTapped
     }
-
-    func getPlayer() -> AVPlayer? {
-        if player == nil {
-            guard
-                let video = post.media?.reddit_video,
-                let url = URL(string: video.hls_url ?? video.fallback_url)
-            else { return nil }
-            player = AVPlayer(url: url)
+    
+    func loadPreview() {
+        if post.isGIF {
+            loadGIF(urlString: post.url)
+        } else if let url = URL(string: getPreviewImageUrls().first ?? "") {
+            self.imageUrl = url
         }
-        return player
+    }
+    
+    func loadGIF(urlString: String) {
+        guard let gifUrl = URL(string: urlString) else { return }
+        
+        URLSession.shared.dataTask(with: gifUrl) { data, _, _ in
+            DispatchQueue.main.async {
+                self.gifData = data
+            }
+        }.resume()
+    }
+    
+    func prepareAndShowVideo() {
+        guard
+            let videoUrl = post.videoUrl,
+            let url = URL(string: videoUrl)
+        else { return }
+        
+        player = AVPlayer(url: url)
+        showVideoFullscreen = true
     }
     
     func getPreviewImageUrls() -> [String] {
         guard let preview = post.preview else { return [] }
         
+        //TODO: better logic to pick resolution
         return preview.images.compactMap { imageSource in
-            imageSource.resolutions.filter { $0.width > 320 }
+            imageSource.resolutions.filter { $0.width >= 240 }
                 .sorted { $0.width > $1.width }
                 .last?.url
         }
@@ -67,15 +90,12 @@ struct PostCellView: View {
                 Spacer()
             }
             .padding(.horizontal)
-            
+             
             // Media Preview
-            if vm.post.is_video,
-                let video = vm.post.media?.reddit_video,
-                let player = vm.getPlayer() {
-                
-                buildVideoPreview(player, video)
-                
-            } else if let imageUrl = URL(string: vm.getPreviewImageUrls().first ?? "") {
+            if let data = vm.gifData {
+                GIFImage(data: data)
+                    .aspectRatio(1.5, contentMode: .fit)
+            } else if let imageUrl = vm.imageUrl {
                 buildImagePreview(imageUrl)
             }
             
@@ -104,45 +124,28 @@ struct PostCellView: View {
                             .cornerRadius(5.0)
                     }
                 }
-            }.padding(.horizontal)
+            }
+            .padding(.horizontal)
         }
         .contentShape(Rectangle())
+        .onAppear{
+            vm.loadPreview()
+        }
         .padding(.vertical, VerticalSpace)
-        .fullScreenCover(isPresented: $vm.showVideoFullscreen) {
+        .sheet(isPresented: $vm.showVideoFullscreen) {
             VideoPlayer(player: vm.player!)
                 .ignoresSafeArea()
                 .onAppear {
                     vm.player?.isMuted = false
+                    vm.player?.play()
                     vm.isVideoMuted = false
                 }
                 .onDisappear {
                     vm.player?.pause()
                 }
         }
-    }
-    
-    @ViewBuilder
-    func buildVideoPreview(_ player: AVPlayer, _ video: Post.Media.RedditVideo) -> some View {
-        VideoPlayer(player: player)
-            .aspectRatio(vm.expandedMode ? video.aspectRatio : 1.5,
-                         contentMode: .fit)
-            .onAppear {
-                vm.player?.isMuted = !vm.expandedMode
-                vm.isVideoMuted = vm.player?.isMuted ?? false
-                vm.player?.play()
-                vm.isVideoPlaying = true
-            }
-            .onDisappear {
-                vm.player?.pause()
-            }
-            .onTapGesture {
-                if !vm.expandedMode {
-                    vm.showVideoFullscreen = true
-                }
-            }
-        
-        if vm.expandedMode {
-            buildVideoControls()
+        .sheet(isPresented: $vm.showWebView) {
+            WebView(url: URL(string: vm.post.url)!)
         }
     }
     
@@ -152,10 +155,21 @@ struct PostCellView: View {
             resultImage
                 .resizable()
                 .scaledToFill()
-                .frame(maxHeight: vm.limitVerticalSpace ? ImageHeight : UIScreen.main.bounds.height - 200)
+                .frame(maxHeight: ImageHeight)
                 .contentShape(Rectangle())
+                .ifCondition(vm.isAKindOfVideo, then: { im in
+                    im.overlay {
+                        PlayButton()
+                    }
+                })
                 .onTapGesture {
-                    vm.onImageTapped(vm.getOriginalImages().first ?? "")
+                    if vm.post.videoUrl != nil {
+                        vm.prepareAndShowVideo()
+                    } else if vm.hasYoutubeLink {
+                        vm.showWebView = true
+                    } else {
+                        vm.onImageTapped(vm.getOriginalImages().first ?? "")
+                    }
                 }
         } placeholder: {
             ZStack {
@@ -165,48 +179,6 @@ struct PostCellView: View {
             }
         }
         .clipped()
-    }
-    
-    @ViewBuilder
-    func buildVideoControls() -> some View {
-        HStack {
-            Button {
-                vm.showVideoFullscreen = true
-            } label: {
-                Image(systemName: "arrow.up.left.and.arrow.down.right")
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(.gray.opacity(0.5))
-                    .cornerRadius(12)
-            }
-            
-            Button {
-                if vm.isVideoPlaying {
-                    vm.player?.pause()
-                    vm.isVideoPlaying = false
-                } else {
-                    vm.player?.play()
-                    vm.isVideoPlaying = true
-                }
-            } label: {
-                Image(systemName: vm.isVideoPlaying ? "pause" : "play")
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(.gray.opacity(0.5))
-                    .cornerRadius(12)
-            }
-            
-            Button {
-                vm.player?.isMuted.toggle()
-                vm.isVideoMuted = vm.player?.isMuted ?? false
-            } label: {
-                Image(systemName: vm.player?.isMuted == true ? "speaker.fill" : "speaker.slash.fill")
-                    .padding()
-                    .foregroundColor(.white)
-                    .background(.gray.opacity(0.5))
-                    .cornerRadius(12)
-            }
-        }
     }
 }
 

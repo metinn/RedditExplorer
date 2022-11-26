@@ -57,7 +57,7 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
-            PostCellView(vm: PostCellViewModel(post: vm.post, limitVerticalSpace: false, expandedMode: true) { imageUrl in
+            PostCellView(vm: PostCellViewModel(post: vm.post, limitVerticalSpace: false) { imageUrl in
                 homeVM.showImage(imageUrl)
             })
             

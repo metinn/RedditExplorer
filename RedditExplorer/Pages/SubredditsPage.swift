@@ -31,7 +31,8 @@ struct SubredditsPage: View {
                 }
                 
                 ForEach(vm.topSubreddits, id: \.self) { subreddit in
-                    NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: subreddit))) {
+                    NavigationLink(destination: listPage(subreddit))
+                    {
                         HStack {
                             Text(subreddit)
                                 .padding(6)
@@ -45,6 +46,12 @@ struct SubredditsPage: View {
             }
             .padding()
         }
+    }
+    
+    @ViewBuilder
+    func listPage(_ subreddit: String) -> some View {
+        PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: subreddit))
+            .navigationTitle(subreddit)
     }
 }
 

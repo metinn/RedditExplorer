@@ -16,6 +16,8 @@ struct Post: RedditObject {
     let selftext: String
     let selftext_html: String?
     let thumbnail: String
+    let is_reddit_media_domain: Bool
+    let domain: String
     let url: String
     let author: String
     let subreddit: String
@@ -50,7 +52,15 @@ struct Post: RedditObject {
     
     struct Preview: Decodable {
         let images: [PreviewImage]
+        let reddit_video_preview: RedditVideoPreview?
         let enabled: Bool
+        
+        var aspectRatio: CGFloat? {
+            if let res = images.first?.resolutions.first {
+                return CGFloat(res.width) / CGFloat(res.height)
+            }
+            return nil
+        }
         
         struct PreviewImage: Decodable {
             let source: ImageSource
@@ -63,32 +73,45 @@ struct Post: RedditObject {
                 let height: Int
             }
         }
+        
+        struct RedditVideoPreview: Decodable {
+            let fallback_url: String
+            let hls_url: String //TODO: is this optional?
+            let width: Int
+            let height: Int
+            let is_gif: Bool
+        }
     }
     
     let media: Media?
-    
+        
     struct Media: Decodable {
         let reddit_video: RedditVideo?
         
         struct RedditVideo: Decodable {
+            let fallback_url: String
+            let hls_url: String
             let height: Int
             let width: Int
-            let duration: Int
-            let fallback_url: String
-            let hls_url: String?
-            let is_gif: Bool
-            
-            var aspectRatio: CGFloat {
-                CGFloat(width) / CGFloat(height)
-            }
         }
+    }
+    
+    var videoUrl: String? {
+        return media?.reddit_video?.hls_url
+            ?? media?.reddit_video?.fallback_url
+            ?? preview?.reddit_video_preview?.hls_url
+            ?? preview?.reddit_video_preview?.fallback_url
+    }
+    
+    var isGIF: Bool {
+        return url.hasSuffix(".gif")
     }
 }
 
 #if DEBUG
 
 func samplePost() -> Post {
-    return Post(id: "wlxu7d", title: "Post Title", name: "Author 1", selftext: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", selftext_html: nil, thumbnail: "", url: "", author: "", subreddit: "AskReddit", subreddit_name_prefixed: "r/tifu", ups: 132, upvote_ratio: 0.87, num_comments: 0, stickied: false, created_utc: 0, preview: Post.Preview(images: [Post.Preview.PreviewImage(source: Post.Preview.PreviewImage.ImageSource(url: "https://external-preview.redd.it/QI8SmE4aAsVHdJerGCF_mEfJLFWaVv5SRCC6lQ8IG6I.jpg?auto=webp&s=aa0f1c5037ff62674a63cf68fe49e03598b51c30", width: 750, height: 300), resolutions: [], id: UUID().uuidString)], enabled: true), is_video: false, link_flair_text: nil, is_original_content: false, spoiler: false, replies: nil, media: nil)
+    return Post(id: "wlxu7d", title: "Post Title", name: "Author 1", selftext: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", selftext_html: nil, thumbnail: "", is_reddit_media_domain: false, domain: "", url: "", author: "", subreddit: "AskReddit", subreddit_name_prefixed: "r/tifu", ups: 132, upvote_ratio: 0.87, num_comments: 0, stickied: false, created_utc: 0, preview: Post.Preview(images: [Post.Preview.PreviewImage(source: Post.Preview.PreviewImage.ImageSource(url: "https://external-preview.redd.it/QI8SmE4aAsVHdJerGCF_mEfJLFWaVv5SRCC6lQ8IG6I.jpg?auto=webp&s=aa0f1c5037ff62674a63cf68fe49e03598b51c30", width: 750, height: 300), resolutions: [], id: UUID().uuidString)], reddit_video_preview: nil, enabled: true), is_video: false, link_flair_text: nil, is_original_content: false, spoiler: false, replies: nil, media: nil)
 }
 
 #endif

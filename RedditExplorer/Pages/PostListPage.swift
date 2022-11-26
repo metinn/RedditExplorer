@@ -34,7 +34,9 @@ class PostListViewModel: ObservableObject {
     }
     
     func refreshPosts() async {
-        posts = []
+        DispatchQueue.main.async {
+            self.posts = []
+        }
         // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
         try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
         await fetchNextPosts()

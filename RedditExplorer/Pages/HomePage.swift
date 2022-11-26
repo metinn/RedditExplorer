@@ -30,6 +30,27 @@ class HomeViewModel: ObservableObject {
                 return "Subreddits"
             }
         }
+        
+        var icon: String {
+            switch self {
+            case .list(let sortBy):
+                switch sortBy {
+                case .hot:
+                    return "flame"
+                case .new:
+                    return "paperplane"
+                case .controversial:
+                    return "questionmark.bubble"
+                case .top:
+                    return "chart.line.uptrend.xyaxis"
+                case .rising:
+                    return "sunrise"
+                }
+                
+            case .subreddits:
+                return "figure.fishing"
+            }
+        }
     }
     
     func showImage(_ imageUrl: String) {
@@ -41,62 +62,35 @@ class HomeViewModel: ObservableObject {
 }
 
 struct HomePage: View {
-    @Environment(\.colorScheme) var currentMode
     @StateObject var vm = HomeViewModel()
     
     var body: some View {
         NavigationView {
-            GeometryReader { geometry in
-                ZStack {
-                    // Tabs
-                    TabView(selection: $vm.selectedTab) {
-                        ForEach(vm.tabList, id: \.self) { tab in
-                            switch tab {
-                            case .list(let sortBy):
-                                PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
-                            case .subreddits:
-                                SubredditsPage()
+            TabView(selection: $vm.selectedTab) {
+                ForEach(vm.tabList, id: \.self) { tab in
+                    switch tab {
+                    case .list(let sortBy):
+                        PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
+                            .tabItem {
+                                Label(tab.title, systemImage: tab.icon)
                             }
-                        }
-                    }
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                    
-                    // Tab bar,
-                    VStack {
-                        Spacer()
-                        tabBar(geometry)
+                    case .subreddits:
+                        SubredditsPage()
+                            .tabItem {
+                                Label(tab.title, systemImage: tab.icon)
+                            }
                     }
                 }
-                .navigationBarHidden(true)
-                .ignoresSafeArea()
             }
         }
         .navigationViewStyle(.stack)
         .overlay {
-            if vm.showImageViewer {            
+            if vm.showImageViewer {
                 ImageViewer(imageUrl: vm.selectedImageURL,
                             showImageViewer: $vm.showImageViewer)
             }
         }
         .environmentObject(vm)
-    }
-    
-    func tabBar(_ geometry: GeometryProxy) -> some View {
-        return HStack {
-            ForEach(vm.tabList, id: \.self) { tab in
-                Text(tab.title)
-                    .opacity(vm.selectedTab == tab ? 1.0 : 0.4)
-                    .onTapGesture {
-                        vm.selectedTab = tab
-                    }
-            }
-        }
-        .padding()
-        .frame(height: 40)
-        .background(currentMode == .light ? .teal : .indigo)
-        .cornerRadius(10)
-        .shadow(radius: 10)
-        .padding(.bottom, geometry.safeAreaInsets.bottom + 30)
     }
 }
 
