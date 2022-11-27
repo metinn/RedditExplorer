@@ -142,6 +142,7 @@ struct PostCellView: View {
                 }
                 .onDisappear {
                     vm.player?.pause()
+                    vm.player = nil
                 }
         }
         .sheet(isPresented: $vm.showWebView) {
