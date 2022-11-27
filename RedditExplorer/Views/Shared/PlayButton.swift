@@ -14,6 +14,7 @@ struct PlayButton: View {
             .foregroundColor(.white)
             .background(.gray.opacity(0.9))
             .cornerRadius(12)
+            .shadow(color: .white, radius: 10)
     }
 }
 

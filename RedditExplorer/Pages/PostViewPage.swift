@@ -12,7 +12,6 @@ class PostViewViewModel: ObservableObject {
     var api: RedditAPIProtocol.Type = RedditAPI.self
     @Published var commentList: [Comment]?
     @Published var collapsedComments: [String] = []
-    @Published var showWebView = false
     
     init(post: Post) {
         self.post = post
@@ -63,7 +62,7 @@ struct PostViewPage: View {
             
             // Link button
             Button {
-                vm.showWebView = true
+                homeVM.showWebView(vm.post.url)
             } label: {
                 Text("Open Link")
                     .padding()
@@ -91,9 +90,6 @@ struct PostViewPage: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             vm.fetchComments()
-        }
-        .sheet(isPresented: $vm.showWebView) {
-            WebView(url: URL(string: vm.post.url)!)
         }
     }
     

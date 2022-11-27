@@ -7,24 +7,17 @@
 
 import SwiftUI
 import CachedAsyncImage
-import AVKit
 import SwiftUIGIF
 
 class PostCellViewModel: ObservableObject {
     let post: Post
     let limitVerticalSpace: Bool
     let onImageTapped: (String)->Void
-    @Published var showVideoFullscreen = false
-    @Published var showWebView = false
-    @Published var isVideoPlaying: Bool = false
-    @Published var isVideoMuted: Bool = false
-    var player: AVPlayer? = nil
     
     @Published var gifData: Data? = nil
     @Published var imageUrl: URL? = nil
     
-    var isAKindOfVideo: Bool { post.videoUrl != nil || hasYoutubeLink }
-    var hasYoutubeLink: Bool { post.domain.contains("youtube.com") || post.domain.contains("youtu.be") }
+    var isAKindOfVideo: Bool { post.videoUrl != nil || post.hasYoutubeLink }
     
     init(post: Post, limitVerticalSpace: Bool, onImageTapped: @escaping (String)->Void) {
         self.post = post
@@ -50,16 +43,6 @@ class PostCellViewModel: ObservableObject {
         }.resume()
     }
     
-    func prepareAndShowVideo() {
-        guard
-            let videoUrl = post.videoUrl,
-            let url = URL(string: videoUrl)
-        else { return }
-        
-        player = AVPlayer(url: url)
-        showVideoFullscreen = true
-    }
-    
     func getPreviewImageUrls() -> [String] {
         guard let preview = post.preview else { return [] }
         
@@ -81,6 +64,7 @@ struct PostCellView: View {
     let ImageHeight: CGFloat = 300
     
     @StateObject var vm: PostCellViewModel
+    @EnvironmentObject var homeVM: HomeViewModel
     
     var body: some View {
         return VStack(spacing: VerticalSpace) {
@@ -132,22 +116,6 @@ struct PostCellView: View {
             vm.loadPreview()
         }
         .padding(.vertical, VerticalSpace)
-        .sheet(isPresented: $vm.showVideoFullscreen) {
-            VideoPlayer(player: vm.player!)
-                .ignoresSafeArea()
-                .onAppear {
-                    vm.player?.isMuted = false
-                    vm.player?.play()
-                    vm.isVideoMuted = false
-                }
-                .onDisappear {
-                    vm.player?.pause()
-                    vm.player = nil
-                }
-        }
-        .sheet(isPresented: $vm.showWebView) {
-            WebView(url: URL(string: vm.post.url)!)
-        }
     }
     
     @ViewBuilder
@@ -164,10 +132,10 @@ struct PostCellView: View {
                     }
                 })
                 .onTapGesture {
-                    if vm.post.videoUrl != nil {
-                        vm.prepareAndShowVideo()
-                    } else if vm.hasYoutubeLink {
-                        vm.showWebView = true
+                    if let url = vm.post.videoUrl {
+                        homeVM.showVideo(url)
+                    } else if vm.post.hasYoutubeLink {
+                        homeVM.showWebView(vm.post.url)
                     } else {
                         vm.onImageTapped(vm.getOriginalImages().first ?? "")
                     }

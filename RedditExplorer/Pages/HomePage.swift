@@ -6,17 +6,9 @@
 //
 
 import SwiftUI
+import AVKit
 
 class HomeViewModel: ObservableObject {
-    let tabList: [HomeViewModel.Tab] = [
-        .list(.hot),
-        .list(.top),
-        .list(.rising),
-        .subreddits]
-    
-    var selectedImageURL: String = ""
-    @Published var showImageViewer: Bool = false
-    
     enum Tab: Hashable {
         case list(SortBy)
         case subreddits
@@ -52,11 +44,44 @@ class HomeViewModel: ObservableObject {
         }
     }
     
+    //
+    let tabList: [HomeViewModel.Tab] = [
+        .list(.hot),
+        .list(.top),
+        .list(.rising),
+        .subreddits]
+    
+    var selectedImageURL: String = ""
+    @Published var showImageViewer: Bool = false
+    
+    var webUrl: String = ""
+    @Published var showWebView = false
+    
+    var player: AVPlayer? = nil
+    @Published var showVideoFullscreen = false
+    
     func showImage(_ imageUrl: String) {
         withAnimation {
             selectedImageURL = imageUrl
             showImageViewer = true
         }
+    }
+    
+    func showWebView(_ url: String) {
+        webUrl = url
+        showWebView = true
+    }
+    
+    func showVideo(_ videoUrl: String) {
+        guard let url = URL(string: videoUrl) else { return }
+        
+        player = AVPlayer(url: url)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            print("player status", self.player?.error?.localizedDescription ?? "no-error", (self.player?.status ?? .unknown) == .readyToPlay, self.player?.rate ?? 0.0)
+        }
+        
+        showVideoFullscreen = true
     }
 }
 
@@ -89,6 +114,22 @@ struct HomePage: View {
                 ImageViewer(imageUrl: vm.selectedImageURL,
                             showImageViewer: $vm.showImageViewer)
             }
+        }
+        .sheet(isPresented: $vm.showWebView) {
+            if let url = URL(string: vm.webUrl) {
+                WebView(url: url)
+            }
+        }
+        .sheet(isPresented: $vm.showVideoFullscreen) {
+            VideoPlayer(player: vm.player!)
+                .ignoresSafeArea()
+                .onAppear {
+                    vm.player?.play()
+                }
+                .onDisappear {
+                    vm.player?.pause()
+                    vm.player = nil
+                }
         }
         .environmentObject(vm)
     }

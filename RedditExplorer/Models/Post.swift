@@ -96,12 +96,13 @@ struct Post: RedditObject {
         }
     }
     
+    /// returns available video url
     var videoUrl: String? {
-        return media?.reddit_video?.hls_url
-            ?? media?.reddit_video?.fallback_url
-            ?? preview?.reddit_video_preview?.hls_url
+        return media?.reddit_video?.fallback_url
             ?? preview?.reddit_video_preview?.fallback_url
     }
+    
+    var hasYoutubeLink: Bool { domain.contains("youtube.com") || domain.contains("youtu.be") }
     
     var isGIF: Bool {
         return url.hasSuffix(".gif")
