@@ -16,7 +16,7 @@ class HomeViewModel: ObservableObject {
         var title: String {
             switch self {
             case .list(let sortBy):
-                return sortBy.rawValue
+                return sortBy.rawValue.capitalized
             case .subreddits:
                 return "Subreddits"
             }
@@ -95,6 +95,7 @@ struct HomePage: View {
                 case .list(let sortBy):
                     NavigationView {
                         PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
+                            .navigationTitle(tab.title)
                     }
                     .tabItem {
                         Label(tab.title, systemImage: tab.icon)
@@ -102,6 +103,7 @@ struct HomePage: View {
                 case .subreddits:
                     NavigationView {
                         SubredditsPage()
+                            .navigationTitle(tab.title)
                     }
                     .tabItem {
                         Label(tab.title, systemImage: tab.icon)

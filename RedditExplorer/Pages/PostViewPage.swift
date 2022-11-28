@@ -48,6 +48,14 @@ class PostViewViewModel: ObservableObject {
     func isCollapsed(_ commentId: String) -> Bool {
         return collapsedComments.contains { $0 == commentId }
     }
+    
+    func commentTapped(_ commentId: String) {
+        if isCollapsed(commentId) {
+            collapsedComments.removeAll { $0 == commentId }
+        } else {
+            collapsedComments.append(commentId)
+        }
+    }
 }
 
 struct PostViewPage: View {
@@ -100,11 +108,7 @@ struct PostViewPage: View {
         
         // comment
         let commentView = Button {
-            if vm.isCollapsed(comment.id) {
-                vm.collapsedComments.removeAll { $0 == comment.id }
-            } else {
-                vm.collapsedComments.append(comment.id)
-            }
+            vm.commentTapped(comment.id)
         } label: {
             CommentView(comment: comment,
                         postAuthor: vm.post.author,
