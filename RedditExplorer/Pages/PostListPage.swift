@@ -11,6 +11,7 @@ import CachedAsyncImage
 class PostListViewModel: ObservableObject {
     let sortBy: SortBy
     let subReddit: String?
+    var isFetchInProgress = false
     
     private var api: RedditAPIProtocol.Type = RedditAPI.self
     
@@ -22,6 +23,11 @@ class PostListViewModel: ObservableObject {
     }
     
     func fetchNextPosts() async {
+        // TODO: better way? when scrolling to fast down, it is possible to get same request more then once
+        guard !isFetchInProgress else { return }
+        isFetchInProgress = true
+        defer { isFetchInProgress = false }
+        
         do {
             let newPosts = try await api.getPosts(sortBy, subreddit: subReddit, after: posts.last?.name, limit: 10)
             
