@@ -10,11 +10,6 @@ import Foundation
 struct MoreComment: RedditObject {
     let id: String
     let count: Int
+    let parent_id: String
     let children: [String]
-    
-    func nextId(_ comments: [Comment]) -> String? {
-        return children.first { cid in
-            !comments.contains(where: { cid == $0.id })
-        }
-    }
 }

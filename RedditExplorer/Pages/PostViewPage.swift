@@ -9,16 +9,17 @@ import SwiftUI
 
 class PostViewViewModel: ObservableObject {
     struct Row {
+        let id: String
         var parents: Set<String>
-        var level: Int
-        var comment: Comment
+        var depth: Int
+        let object: RedditObject
     }
     
     let post: Post
     var api: RedditAPIProtocol.Type = RedditAPI.self
-//    @Published var commentList: [Comment]?
     @Published var rows: [Row]?
     @Published var collapsedComments: [String] = []
+    @Published var moreCommentInFetch: String?
     
     init(post: Post) {
         self.post = post
@@ -28,11 +29,9 @@ class PostViewViewModel: ObservableObject {
         Task {
             do {
                 let newComments = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: nil)
-                
                 let newRows = flattenComments(comments: newComments)
                 
                 DispatchQueue.main.async {
-//                    self.commentList = newComments
                     self.rows = newRows
                 }
                 
@@ -46,50 +45,78 @@ class PostViewViewModel: ObservableObject {
         var rows = [Row]()
         for comment in comments {
             rows.append(contentsOf: getRows(comment: comment,
-                                            level: 0,
+                                            depth: 0,
                                             parents: []))
         }
         return rows
     }
     
-    func getRows(comment: Comment, level: Int, parents: Set<String>) -> [Row] {
+    func getRows(comment: Comment, depth: Int, parents: Set<String>) -> [Row] {
         var rows = [Row]()
-        let newRow = Row(parents: parents, level: level, comment: comment)
+        let newRow = Row(id: comment.id,
+                         parents: parents,
+                         depth: depth,
+                         object: comment)
         rows.append(newRow)
         
         if let replies = comment.replies?.data as? RedditListing {
+            var newParents = parents
+            
             for replyObject in replies.children {
                 if let reply = replyObject.data as? Comment {
                     
-                    var mparents = parents
-                    mparents.insert(comment.id)
+                    newParents.insert(comment.id)
                     rows.append(contentsOf: getRows(comment: reply,
-                                                    level: level + 1,
-                                                    parents: mparents))
+                                                    depth: depth + 1,
+                                                    parents: newParents))
                 }
-//            else if let more = replyObject.data as? MoreComment {
-//                buildMoreComment(more, depth: depth, topParentId: topParentId)
-//            }
+                else if let more = replyObject.data as? MoreComment {
+                    
+                    newParents.insert(comment.id)
+                    rows.append(Row(id: more.id,
+                                    parents: newParents,
+                                    depth: depth + 1,
+                                    object: more))
+                }
             }
         }
         
         return rows
     }
     
-//    func fetchMoreComment(id: String) async {
-//        do {
-//            guard
-//                let new = try await api.getComments(subreddit: post.subreddit, id: post.id, commentId: id).first,
-//                let index = commentList?.firstIndex(where: { $0.id == new.id })
-//            else { return }
-//
-//            commentList?[index] = new
-//
-//        } catch let err {
-//            print("Error", err.localizedDescription)
-//        }
-//    }
-//
+    func fetchMoreComment(idToFetch: String, row: PostViewViewModel.Row) async {
+        guard moreCommentInFetch == nil else { return }
+        moreCommentInFetch = row.id
+        defer { moreCommentInFetch = nil }
+        
+        let commentId = idToFetch.replacingOccurrences(of: "t1_", with: "")
+        do {
+            // fetch parent comment with all replies
+            guard
+                let more = row.object as? MoreComment,
+                let newComment = try await api.getComments(subreddit: post.subreddit,
+                                                           id: post.id,
+                                                           commentId: commentId)
+                    .first
+            else { return }
+            
+            // convert comments to rows
+            let newRows = getRows(comment: newComment, depth: row.depth - 1, parents: row.parents)
+                .filter { more.children.contains($0.id) }
+                
+            withAnimation {
+                // remove parent comment and insert it back with all replies
+                if let indexOfMore = rows?.firstIndex(where: { $0.id == row.id }) {
+                    rows?.remove(at: indexOfMore)
+                    rows?.insert(contentsOf: newRows, at: indexOfMore)
+                }
+            }
+            
+        } catch let err {
+            print("Error", err.localizedDescription)
+        }
+    }
+
     func isCollapsed(_ commentId: String) -> Bool {
         return collapsedComments.contains { $0 == commentId }
     }
@@ -101,7 +128,6 @@ class PostViewViewModel: ObservableObject {
             } else {
                 collapsedComments.append(commentId)
             }
-            
         }
     }
 }
@@ -112,6 +138,7 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
+            // Post
             PostCellView(vm: PostCellViewModel(post: vm.post, limitVerticalSpace: false) { imageUrl in
                 homeVM.showImage(imageUrl)
             })
@@ -127,79 +154,52 @@ struct PostViewPage: View {
             }
             .padding(.horizontal)
             
+            // Seperator
             RoundedRectangle(cornerRadius: 1.5)
                 .foregroundColor(Color.gray)
                 .frame(height: 1)
             
-            if vm.rows == nil {
-                ProgressView()
-            }
-            
+            // Comments
             if let rows = vm.rows {
                 LazyVStack(spacing: 0) {
-                    ForEach(rows, id: \.comment.id) { row in
+                    ForEach(rows, id: \.id) { row in
                         
                         if row.parents.isDisjoint(with: Set(vm.collapsedComments)) {
-//                            Button {
-//
-//                            } label: {
-                                CommentView(comment: row.comment,
-                                            postAuthor: vm.post.author,
-                                            depth: row.level,
-                                            isCollapsed: vm.isCollapsed(row.comment.id))
-                                .onTapGesture {
-                                    vm.commentTapped(row.comment.id)
-                                }
-//                            }.buttonStyle(.plain)
+                            if let comment = row.object as? Comment {
+                                buildComment(comment, row: row)
+                            } else if let more = row.object as? MoreComment {
+                                buildMoreComment(more, row: row)
+                            }
                         }
+                        
                     }
                 }
+            } else {
+                ProgressView()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(vm.post.subreddit)
         .onAppear {
             vm.fetchComments()
         }
     }
     
-    // TODO: Remove AnyView if possible (is anyview giving us performance hit?)
-    // WWDC21 Demystfiy swiftui 14:00 suggests adding @ViewBuilder but it does not work as long as it recursively calls its self
-    func buildComment(comment: Comment, depth: Int, topParentId: String) -> AnyView {
-        let collapsed = vm.isCollapsed(comment.id)
-        
-        // comment
-        let commentView = Button {
-            vm.commentTapped(comment.id)
+    func buildComment(_ comment: Comment, row: PostViewViewModel.Row) -> some View {
+        Button {
+            vm.commentTapped(row.id)
         } label: {
             CommentView(comment: comment,
                         postAuthor: vm.post.author,
-                        depth: depth,
-                        isCollapsed: collapsed)
+                        depth: row.depth,
+                        isCollapsed: vm.isCollapsed(row.id))
         }.buttonStyle(.plain)
-
-        // replies
-        guard !collapsed, let replies = comment.replies?.data as? RedditListing else {
-            return AnyView(commentView)
-        }
-        
-        return AnyView(VStack(spacing: 0) {
-            commentView
-            
-            ForEach(replies.children, id: \.data.id)  { replyObject in
-                if let reply = replyObject.data as? Comment {
-                    buildComment(comment: reply, depth: depth + 1, topParentId: topParentId)
-                    
-                } else if let more = replyObject.data as? MoreComment {
-                    buildMoreComment(more, depth: depth, topParentId: topParentId)
-                }
-            }
-        })
     }
     
-    func buildMoreComment(_ more: MoreComment, depth: Int, topParentId: String) -> some View {
-        return MoreCommentView(moreComment: more, depth: depth + 1)
+    func buildMoreComment(_ more: MoreComment, row: PostViewViewModel.Row) -> some View {
+        return MoreCommentView(count: more.count, depth: row.depth, isLoading: vm.moreCommentInFetch == more.id)
             .onTapGesture {
-//                Task { await vm.fetchMoreComment(id: topParentId) }
+                Task { await vm.fetchMoreComment(idToFetch: more.parent_id, row: row) }
             }
     }
 }

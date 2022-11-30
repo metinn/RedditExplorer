@@ -8,14 +8,19 @@
 import SwiftUI
 
 struct MoreCommentView: View {
-    let moreComment: MoreComment
+    let count: Int
     let depth: Int
+    let isLoading: Bool
     
     var body: some View {
         CommentCell(depth: depth, isCollapsed: false) {
-            Text("\(moreComment.count) more comment")
-                .foregroundColor(.blue)
-                .padding(.vertical, 6)
+            if isLoading {
+                ProgressView()
+            } else {
+                Text("\(count) more comment")
+                    .foregroundColor(.blue)
+                    .padding(.vertical, 6)                
+            }
         }
     }
 }
