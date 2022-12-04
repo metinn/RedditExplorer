@@ -97,9 +97,10 @@ struct Post: RedditObject {
     }
     
     /// returns available video url
+    // TODO: implement a mechanizm to use fallback url. Note: fallback video url doesn't have sound
     var videoUrl: String? {
-        return media?.reddit_video?.fallback_url
-            ?? preview?.reddit_video_preview?.fallback_url
+        return media?.reddit_video?.hls_url
+            ?? preview?.reddit_video_preview?.hls_url
     }
     
     var hasYoutubeLink: Bool { domain.contains("youtube.com") || domain.contains("youtu.be") }
