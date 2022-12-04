@@ -16,10 +16,11 @@ struct MoreCommentView: View {
         CommentCell(depth: depth, isCollapsed: false) {
             if isLoading {
                 ProgressView()
+                    .padding(.vertical, 6)
             } else {
                 Text("\(count) more comment")
                     .foregroundColor(.blue)
-                    .padding(.vertical, 6)                
+                    .padding(.vertical, 6)
             }
         }
     }
