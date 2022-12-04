@@ -1,5 +1,5 @@
 //
-//  PostCellView.swift
+//  PostView.swift
 //  RedditExplorer
 //
 //  Created by Metin Güler on 01.05.22.
@@ -9,7 +9,7 @@ import SwiftUI
 import CachedAsyncImage
 import SwiftUIGIF
 
-class PostCellViewModel: ObservableObject {
+class PostViewModel: ObservableObject {
     let post: Post
     let limitVerticalSpace: Bool
     let onImageTapped: (String)->Void
@@ -59,11 +59,11 @@ class PostCellViewModel: ObservableObject {
     }
 }
 
-struct PostCellView: View {
+struct PostView: View {
     let VerticalSpace: CGFloat = 6
     let ImageHeight: CGFloat = 300
     
-    @StateObject var vm: PostCellViewModel
+    @StateObject var vm: PostViewModel
     @EnvironmentObject var homeVM: HomeViewModel
     
     var body: some View {
@@ -95,7 +95,7 @@ struct PostCellView: View {
                             .lineLimit(vm.limitVerticalSpace ? 2 : nil)
                     }
                     
-                    PostDataView(post: vm.post)
+                    PostFooterView(post: vm.post)
                 }
                 Spacer()
                 
@@ -154,7 +154,7 @@ struct PostCellView: View {
 #if DEBUG
 struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
-        PostCellView(vm: PostCellViewModel(post: samplePost(), limitVerticalSpace: false, onImageTapped: {_ in}))
+        PostView(vm: PostViewModel(post: samplePost(), limitVerticalSpace: false, onImageTapped: {_ in}))
         .previewLayout(.sizeThatFits)
     }
 }

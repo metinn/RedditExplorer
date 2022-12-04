@@ -22,7 +22,7 @@ struct CommentView: View {
     }
     
     var body: some View {
-        CommentCell(depth: depth, isCollapsed: isCollapsed) {
+        CommentFrame(depth: depth, isCollapsed: isCollapsed) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: Constants.Space.IconGroup) {
                     authorText

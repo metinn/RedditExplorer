@@ -86,8 +86,8 @@ class PostViewViewModel: ObservableObject {
     
     func fetchMoreComment(idToFetch: String, row: PostViewViewModel.Row) async {
         guard moreCommentInFetch == nil else { return }
-        moreCommentInFetch = row.id
-        defer { moreCommentInFetch = nil }
+        DispatchQueue.main.async { self.moreCommentInFetch = row.id }
+        defer { DispatchQueue.main.async { self.moreCommentInFetch = nil } }
         
         let commentId = idToFetch.replacingOccurrences(of: "t1_", with: "")
         do {
@@ -139,7 +139,7 @@ struct PostViewPage: View {
     var body: some View {
         ScrollView {
             // Post
-            PostCellView(vm: PostCellViewModel(post: vm.post, limitVerticalSpace: false) { imageUrl in
+            PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false) { imageUrl in
                 homeVM.showImage(imageUrl)
             })
             

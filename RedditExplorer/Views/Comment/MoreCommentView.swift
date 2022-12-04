@@ -13,7 +13,7 @@ struct MoreCommentView: View {
     let isLoading: Bool
     
     var body: some View {
-        CommentCell(depth: depth, isCollapsed: false) {
+        CommentFrame(depth: depth, isCollapsed: false) {
             if isLoading {
                 ProgressView()
                     .padding(.vertical, 6)

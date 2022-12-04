@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CommentCell<Content>: View where Content : View {
+struct CommentFrame<Content>: View where Content : View {
     let depth: Int
     let isCollapsed: Bool
     @ViewBuilder var content: () -> Content
@@ -54,19 +54,19 @@ struct CommentCell<Content>: View where Content : View {
 struct CommentCell_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            CommentCell(depth: 0, isCollapsed: false, content: {
+            CommentFrame(depth: 0, isCollapsed: false, content: {
                 Text("A text")
             })
             .previewLayout(.sizeThatFits)
-            CommentCell(depth: 1, isCollapsed: false, content: {
+            CommentFrame(depth: 1, isCollapsed: false, content: {
                 Text("A text")
             })
             .previewLayout(.sizeThatFits)
-            CommentCell(depth: 2, isCollapsed: false, content: {
+            CommentFrame(depth: 2, isCollapsed: false, content: {
                 Text("A text")
             })
             .previewLayout(.sizeThatFits)
-            CommentCell(depth: 3, isCollapsed: true, content: {
+            CommentFrame(depth: 3, isCollapsed: true, content: {
                 Text("A text")
             })
             .previewLayout(.sizeThatFits)
