@@ -13,6 +13,8 @@ struct CommentView: View {
     let depth: Int
     let isCollapsed: Bool
     
+    @EnvironmentObject var homeVM: HomeViewModel
+    
     var authorText: some View {
         if comment.author == postAuthor {
             return Text(comment.author).foregroundColor(.accentColor).bold()
@@ -44,6 +46,10 @@ struct CommentView: View {
                     Text("")
                 } else if let attrStr = attributedCommentText {
                     Text(attrStr)
+                        .environment(\.openURL, OpenURLAction { url in
+                            homeVM.showWebView(url.absoluteString)
+                            return .handled
+                          })
                 } else {
                     Text(comment.body)
                 }
