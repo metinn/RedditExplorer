@@ -97,7 +97,7 @@ struct Post: RedditObject {
     }
     
     /// returns available video url
-    // TODO: implement a mechanizm to use fallback url. Note: fallback video url doesn't have sound
+    // TODO: implement a mechanism to use fallback url. Note: fallback video url doesn't have sound
     var videoUrl: String? {
         return media?.reddit_video?.hls_url
             ?? preview?.reddit_video_preview?.hls_url
