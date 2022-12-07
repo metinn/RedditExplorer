@@ -21,9 +21,14 @@ struct CommentView: View {
         }
     }
     
+    var attributedCommentText: AttributedString? {
+        try? AttributedString(markdown: comment.body)
+    }
+
     var body: some View {
         CommentFrame(depth: depth, isCollapsed: isCollapsed) {
             VStack(alignment: .leading, spacing: 0) {
+                // header
                 HStack(spacing: Constants.Space.IconGroup) {
                     authorText
                     HStack(spacing: Constants.Space.IconText) {
@@ -34,7 +39,14 @@ struct CommentView: View {
                 .font(.caption)
                 .opacity(0.75)
                 
-                Text(isCollapsed ? "" : comment.body)
+                // comment text
+                if isCollapsed {
+                    Text("")
+                } else if let attrStr = attributedCommentText {
+                    Text(attrStr)
+                } else {
+                    Text(comment.body)
+                }
             }
             .padding(.vertical, 6)
         }

@@ -76,11 +76,6 @@ class HomeViewModel: ObservableObject {
         guard let url = URL(string: videoUrl) else { return }
         
         player = AVPlayer(url: url)
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-            print("player status", self.player?.error?.localizedDescription ?? "no-error", (self.player?.status ?? .unknown) == .readyToPlay, self.player?.rate ?? 0.0)
-        }
-        
         showVideoFullscreen = true
     }
 }
