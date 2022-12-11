@@ -18,7 +18,7 @@ class PostViewViewModel: ObservableObject {
     let post: Post
     var api: RedditAPIProtocol.Type = RedditAPI.self
     @Published var rows: [Row]?
-    @Published var collapsedComments: [String] = []
+    @Published var collapsedComments: Set<String> = []
     @Published var moreCommentInFetch: String?
     
     init(post: Post) {
@@ -124,9 +124,9 @@ class PostViewViewModel: ObservableObject {
     func commentTapped(_ commentId: String) {
         withAnimation {
             if isCollapsed(commentId) {
-                collapsedComments.removeAll { $0 == commentId }
+                collapsedComments.remove(commentId)
             } else {
-                collapsedComments.append(commentId)
+                collapsedComments.insert(commentId)
             }
         }
     }
