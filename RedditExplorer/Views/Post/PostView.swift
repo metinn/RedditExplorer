@@ -17,6 +17,11 @@ class PostViewModel: ObservableObject {
     @Published var gifData: Data? = nil
     @Published var imageUrl: URL? = nil
     
+    var attributedSelfText: AttributedString? {
+        guard !post.selftext.isEmpty else { return nil }
+        return try? AttributedString(markdown: post.selftext)
+    }
+    
     var isAKindOfVideo: Bool { post.videoUrl != nil || post.hasYoutubeLink }
     
     init(post: Post, limitVerticalSpace: Bool, onImageTapped: @escaping (String)->Void) {
@@ -89,7 +94,15 @@ struct PostView: View {
                     Text(vm.post.title)
                         .font(.headline)
                     
-                    if !vm.post.selftext.isEmpty {
+                    if let attrStr = vm.attributedSelfText {
+                        Text(attrStr)
+                            .font(.body)
+                            .lineLimit(vm.limitVerticalSpace ? 2 : nil)
+                            .environment(\.openURL, OpenURLAction { url in
+                                homeVM.showWebView(url.absoluteString)
+                                return .handled
+                              })
+                    } else if !vm.post.selftext.isEmpty {
                         Text(vm.post.selftext)
                             .font(.body)
                             .lineLimit(vm.limitVerticalSpace ? 2 : nil)

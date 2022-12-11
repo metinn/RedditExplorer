@@ -132,6 +132,7 @@ class PostViewViewModel: ObservableObject {
     }
 }
 
+//MARK: - View
 struct PostViewPage: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @StateObject var vm: PostViewViewModel
