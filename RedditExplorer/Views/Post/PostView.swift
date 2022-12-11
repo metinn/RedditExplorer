@@ -19,7 +19,7 @@ class PostViewModel: ObservableObject {
     
     var attributedSelfText: AttributedString? {
         guard !post.selftext.isEmpty else { return nil }
-        return try? AttributedString(markdown: post.selftext)
+        return Markdown.getAttributedString(from: post.selftext)
     }
     
     var isAKindOfVideo: Bool { post.videoUrl != nil || post.hasYoutubeLink }

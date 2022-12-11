@@ -24,7 +24,7 @@ struct CommentView: View {
     }
     
     var attributedCommentText: AttributedString? {
-        try? AttributedString(markdown: comment.body)
+        Markdown.getAttributedString(from: comment.body)
     }
 
     var body: some View {
