@@ -57,7 +57,7 @@ struct PostListPage: View {
     var body: some View {
         ScrollView {
             LazyVStack {
-                ForEach(vm.posts, id: \.id) { post in
+                ForEach(vm.posts, id: \.url) { post in
                     buildPostCell(post)
                 }
             }
@@ -75,12 +75,17 @@ struct PostListPage: View {
     func buildPostCell(_ post: Post) -> some View {
         return VStack {
             NavigationLink(destination: PostViewPage(vm: PostViewViewModel(post: post))) {
-                PostView(vm: PostViewModel(post: post, limitVerticalSpace: true) { imageUrl in
-                    homeVM.showImage(imageUrl)
-                })
-                .onAppear {
-                    if vm.posts.last?.name == post.name {
-                        Task { await vm.fetchNextPosts() }
+                VStack {
+                    if MediaPreviewView.hasPreview(post: post) {
+                        MediaPreviewView(vm: MediaPreviewViewModel(post: post))
+                            .frame(height: MediaPreviewView.ImageHeight)
+                    }
+                    
+                    PostView(vm: PostViewModel(post: post, limitVerticalSpace: true))
+                    .onAppear {
+                        if vm.posts.last?.name == post.name {
+                            Task { await vm.fetchNextPosts() }
+                        }
                     }
                 }
             }.buttonStyle(PlainButtonStyle())

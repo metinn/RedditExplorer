@@ -139,10 +139,11 @@ struct PostViewPage: View {
     
     var body: some View {
         ScrollView {
+            // Media Preview
+            MediaPreviewView(vm: MediaPreviewViewModel(post: vm.post))
+            
             // Post
-            PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false) { imageUrl in
-                homeVM.showImage(imageUrl)
-            })
+            PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false))
             
             // Link button
             Button {

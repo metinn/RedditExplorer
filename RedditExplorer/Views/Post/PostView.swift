@@ -12,55 +12,15 @@ import SwiftUIGIF
 class PostViewModel: ObservableObject {
     let post: Post
     let limitVerticalSpace: Bool
-    let onImageTapped: (String)->Void
-    
-    @Published var gifData: Data? = nil
-    @Published var imageUrl: URL? = nil
     
     var attributedSelfText: AttributedString? {
         guard !post.selftext.isEmpty else { return nil }
         return Markdown.getAttributedString(from: post.selftext)
     }
     
-    var isAKindOfVideo: Bool { post.videoUrl != nil || post.hasYoutubeLink }
-    
-    init(post: Post, limitVerticalSpace: Bool, onImageTapped: @escaping (String)->Void) {
+    init(post: Post, limitVerticalSpace: Bool) {
         self.post = post
         self.limitVerticalSpace = limitVerticalSpace
-        self.onImageTapped = onImageTapped
-    }
-    
-    func loadPreview() {
-        if post.isGIF {
-            loadGIF(urlString: post.url)
-        } else if let url = URL(string: getPreviewImageUrls().first ?? "") {
-            self.imageUrl = url
-        }
-    }
-    
-    func loadGIF(urlString: String) {
-        guard let gifUrl = URL(string: urlString) else { return }
-        
-        URLSession.shared.dataTask(with: gifUrl) { data, _, _ in
-            DispatchQueue.main.async {
-                self.gifData = data
-            }
-        }.resume()
-    }
-    
-    func getPreviewImageUrls() -> [String] {
-        guard let preview = post.preview else { return [] }
-        
-        //TODO: better logic to pick resolution
-        return preview.images.compactMap { imageSource in
-            imageSource.resolutions.filter { $0.width >= 240 }
-                .sorted { $0.width > $1.width }
-                .last?.url
-        }
-    }
-    
-    func getOriginalImages() -> [String] {
-        post.preview?.images.compactMap { $0.source.url } ?? []
     }
 }
 
@@ -79,14 +39,6 @@ struct PostView: View {
                 Spacer()
             }
             .padding(.horizontal)
-             
-            // Media Preview
-            if let data = vm.gifData {
-                GIFImage(data: data)
-                    .aspectRatio(1.5, contentMode: .fit)
-            } else if let imageUrl = vm.imageUrl {
-                buildImagePreview(imageUrl)
-            }
             
             // Text & Thumbnail
             HStack(alignment: .top) {
@@ -125,49 +77,14 @@ struct PostView: View {
             .padding(.horizontal)
         }
         .contentShape(Rectangle())
-        .onAppear{
-            vm.loadPreview()
-        }
         .padding(.vertical, VerticalSpace)
-    }
-    
-    @ViewBuilder
-    func buildImagePreview(_ imageUrl: URL) -> some View {
-        CachedAsyncImage(url: imageUrl) { resultImage in
-            resultImage
-                .resizable()
-                .scaledToFill()
-                .frame(maxHeight: ImageHeight)
-                .contentShape(Rectangle())
-                .ifCondition(vm.isAKindOfVideo, then: { im in
-                    im.overlay {
-                        PlayButton()
-                    }
-                })
-                .onTapGesture {
-                    if let url = vm.post.videoUrl {
-                        homeVM.showVideo(url)
-                    } else if vm.post.hasYoutubeLink {
-                        homeVM.showWebView(vm.post.url)
-                    } else {
-                        vm.onImageTapped(vm.getOriginalImages().first ?? "")
-                    }
-                }
-        } placeholder: {
-            ZStack {
-                Color.gray
-                    .frame(height: ImageHeight)
-                ProgressView()
-            }
-        }
-        .clipped()
     }
 }
 
 #if DEBUG
 struct PostCellView_Previews: PreviewProvider {
     static var previews: some View {
-        PostView(vm: PostViewModel(post: samplePost(), limitVerticalSpace: false, onImageTapped: {_ in}))
+        PostView(vm: PostViewModel(post: samplePost(), limitVerticalSpace: false))
         .previewLayout(.sizeThatFits)
     }
 }
