@@ -16,6 +16,7 @@
 		63A039842896801C00B0C568 /* RedditObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A039832896801C00B0C568 /* RedditObjects.swift */; };
 		63A3974F2932A09B00BF6921 /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3974E2932A09B00BF6921 /* PlayButton.swift */; };
 		63A7F27229461FC60019FF4C /* Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A7F27129461FC60019FF4C /* Markdown.swift */; };
+		63AD09BE29748284009CA11C /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 63AD09BD29748284009CA11C /* Reachability */; };
 		63B992CF29539FE5000005B4 /* MediaPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B992CE29539FE5000005B4 /* MediaPreviewView.swift */; };
 		63B992D12953AC19000005B4 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63B992D02953AC19000005B4 /* Array.swift */; };
 		63CCAD5628A3E9DF00C24400 /* ImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CCAD5528A3E9DF00C24400 /* ImageViewer.swift */; };
@@ -92,6 +93,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				63E1D19A281ECA4E006177B8 /* CachedAsyncImage in Frameworks */,
+				63AD09BE29748284009CA11C /* Reachability in Frameworks */,
 				63E5310F28B2E5B900A429CE /* SwiftUIGIF in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -259,6 +261,7 @@
 			packageProductDependencies = (
 				63E1D199281ECA4E006177B8 /* CachedAsyncImage */,
 				63E5310E28B2E5B900A429CE /* SwiftUIGIF */,
+				63AD09BD29748284009CA11C /* Reachability */,
 			);
 			productName = RedditExplorer;
 			productReference = 63EBEECA27E6486900DB018D /* RdD.app */;
@@ -313,6 +316,7 @@
 			packageReferences = (
 				63E1D198281ECA4E006177B8 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */,
 				63E5310D28B2E5B900A429CE /* XCRemoteSwiftPackageReference "swiftui-gif" */,
+				63AD09BC29748284009CA11C /* XCRemoteSwiftPackageReference "Reachability" */,
 			);
 			productRefGroup = 63EBEECB27E6486900DB018D /* Products */;
 			projectDirPath = "";
@@ -654,6 +658,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		63AD09BC29748284009CA11C /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		63E1D198281ECA4E006177B8 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lorenzofiamingo/swiftui-cached-async-image";
@@ -673,6 +685,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		63AD09BD29748284009CA11C /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 63AD09BC29748284009CA11C /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
+		};
 		63E1D199281ECA4E006177B8 /* CachedAsyncImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 63E1D198281ECA4E006177B8 /* XCRemoteSwiftPackageReference "swiftui-cached-async-image" */;

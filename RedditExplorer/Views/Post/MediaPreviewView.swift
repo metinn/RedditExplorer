@@ -8,6 +8,7 @@
 import SwiftUI
 import CachedAsyncImage
 import SwiftUIGIF
+import Reachability
 
 class MediaPreviewViewModel: ObservableObject {
     let post: Post
@@ -42,10 +43,17 @@ class MediaPreviewViewModel: ObservableObject {
     func getPreviewImageUrls() -> [String] {
         guard let preview = post.preview else { return [] }
         
+        let reachability = try! Reachability()
+        
         return preview.images.compactMap { imageSource in
-            imageSource.resolutions
+            let images = imageSource.resolutions
                 .sorted { $0.width > $1.width }
-                .middle?.url
+            
+            if reachability.connection == .wifi {
+                return images.first?.url
+            } else {
+                return images.middle?.url
+            }
         }
     }
     
