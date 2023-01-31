@@ -63,7 +63,7 @@ class MediaPreviewViewModel: ObservableObject {
 }
 
 struct MediaPreviewView: View {
-    static let ImageHeight: CGFloat = 300
+    static let MaxPreviewHeight: CGFloat = UIScreen.main.bounds.height
     @StateObject var vm: MediaPreviewViewModel
     @EnvironmentObject var homeVM: HomeViewModel
     
@@ -92,7 +92,7 @@ struct MediaPreviewView: View {
             resultImage
                 .resizable()
                 .scaledToFill()
-                .frame(height: MediaPreviewView.ImageHeight)
+                .frame(maxHeight: MediaPreviewView.MaxPreviewHeight)
                 .contentShape(Rectangle())
                 .ifCondition(vm.isAKindOfVideo, then: { im in
                     im.overlay {
@@ -111,7 +111,7 @@ struct MediaPreviewView: View {
         } placeholder: {
             ZStack {
                 Color.gray
-                    .frame(height: MediaPreviewView.ImageHeight)
+                    .aspectRatio(vm.post.preview?.aspectRatio ?? 1, contentMode: .fill)
                 ProgressView()
             }
         }

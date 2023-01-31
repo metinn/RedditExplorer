@@ -78,7 +78,6 @@ struct PostListPage: View {
                 VStack {
                     if MediaPreviewView.hasPreview(post: post) {
                         MediaPreviewView(vm: MediaPreviewViewModel(post: post))
-                            .frame(height: MediaPreviewView.ImageHeight)
                     }
                     
                     PostView(vm: PostViewModel(post: post, limitVerticalSpace: true))
