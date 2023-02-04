@@ -15,28 +15,26 @@ struct CommentFrame<Content>: View where Content : View {
     let CommentDepth = 10
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            // Content
-            HStack {
-                content()
-                
-                // Expand icon
-                if isCollapsed {
-                    Spacer()
-                    Image(systemName: "chevron.down")
-                }
+        // Content
+        HStack {
+            content()
+                .padding(.horizontal, 10)
+            
+            Spacer()
+            // Expand icon
+            if isCollapsed {
+                Image(systemName: "chevron.down")
+                    .padding(.trailing, 10)
             }
-            .padding(.horizontal, 10)
-
-            RoundedRectangle(cornerRadius: 1.5)
-                .foregroundColor(Color.gray)
-                .frame(height: 0.5)
         }
         // leading depth line
         .overlay(alignment: .leading) {
                 Rectangle()
                     .frame(width: 2, alignment: .leading)
                     .foregroundColor(colorForDepth(depth))
+                    .padding(.vertical, 4)
+                    .cornerRadius(2)
+                    .clipped()
         }
         .padding(.leading, CGFloat(depth * CommentDepth))
         .contentShape(Rectangle())
@@ -59,7 +57,7 @@ struct CommentCell_Previews: PreviewProvider {
             })
             .previewLayout(.sizeThatFits)
             CommentFrame(depth: 1, isCollapsed: false, content: {
-                Text("A text")
+                Text("Aperiam sint cum non error minus ducimus asperiores voluptatem. Deserunt deleniti delectus exercitationem pariatur et.")
             })
             .previewLayout(.sizeThatFits)
             CommentFrame(depth: 2, isCollapsed: false, content: {
