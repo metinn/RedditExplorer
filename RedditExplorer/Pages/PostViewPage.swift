@@ -146,15 +146,7 @@ struct PostViewPage: View {
             PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false))
             
             // Link button
-            Button {
-                homeVM.showWebView(vm.post.url)
-            } label: {
-                Text("Open Link")
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .border(.blue, width: 1)
-            }
-            .padding(.horizontal)
+            LinkButton(urlString: vm.post.url)
             
             // Seperator
             RoundedRectangle(cornerRadius: 1.5)

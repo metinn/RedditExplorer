@@ -23,6 +23,7 @@
 		63CCAD5828A683E000C24400 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CCAD5728A683E000C24400 /* Constants.swift */; };
 		63CCAD5F28A7B3E800C24400 /* IfCondition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CCAD5E28A7B3E800C24400 /* IfCondition.swift */; };
 		63CCAD6128A7C30900C24400 /* OnRefresh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63CCAD6028A7C30900C24400 /* OnRefresh.swift */; };
+		63DFCB95299C09200095FC1F /* LinkButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DFCB94299C09200095FC1F /* LinkButton.swift */; };
 		63E1D19A281ECA4E006177B8 /* CachedAsyncImage in Frameworks */ = {isa = PBXBuildFile; productRef = 63E1D199281ECA4E006177B8 /* CachedAsyncImage */; };
 		63E1D19C281ECF9D006177B8 /* PostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E1D19B281ECF9D006177B8 /* PostView.swift */; };
 		63E5310F28B2E5B900A429CE /* SwiftUIGIF in Frameworks */ = {isa = PBXBuildFile; productRef = 63E5310E28B2E5B900A429CE /* SwiftUIGIF */; };
@@ -68,6 +69,7 @@
 		63CCAD5728A683E000C24400 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		63CCAD5E28A7B3E800C24400 /* IfCondition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IfCondition.swift; sourceTree = "<group>"; };
 		63CCAD6028A7C30900C24400 /* OnRefresh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnRefresh.swift; sourceTree = "<group>"; };
+		63DFCB94299C09200095FC1F /* LinkButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkButton.swift; sourceTree = "<group>"; };
 		63E1D19B281ECF9D006177B8 /* PostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostView.swift; sourceTree = "<group>"; };
 		63EA7A3B288748E5007A6263 /* CommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentView.swift; sourceTree = "<group>"; };
 		63EA7A4128A2F29D007A6263 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				63EA7A4128A2F29D007A6263 /* WebView.swift */,
 				63CCAD5528A3E9DF00C24400 /* ImageViewer.swift */,
 				63A3974E2932A09B00BF6921 /* PlayButton.swift */,
+				63DFCB94299C09200095FC1F /* LinkButton.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 				63EBEECE27E6486900DB018D /* RedditExplorerApp.swift in Sources */,
 				636D719628972A5800354E89 /* CommentFrame.swift in Sources */,
 				63A039842896801C00B0C568 /* RedditObjects.swift in Sources */,
+				63DFCB95299C09200095FC1F /* LinkButton.swift in Sources */,
 				63A039822896800100B0C568 /* MoreComment.swift in Sources */,
 				63CCAD6128A7C30900C24400 /* OnRefresh.swift in Sources */,
 				63EBEF0A27E763EC00DB018D /* Post.swift in Sources */,
