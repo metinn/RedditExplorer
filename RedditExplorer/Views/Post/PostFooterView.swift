@@ -12,21 +12,21 @@ struct PostFooterView: View {
     @State var post: Post
     
     var body: some View {
-        HStack(spacing: Constants.Space.IconGroup) {
+        HStack(spacing: Space.medium) {
             
-            HStack(spacing: Constants.Space.IconText) {
+            HStack(spacing: Space.mini) {
                 Image(systemName: "arrow.up")
                 Text("\(post.ups)")
             }
             .font(.footnote)
             
-            HStack(spacing: Constants.Space.IconText) {
+            HStack(spacing: Space.mini) {
                 Image(systemName: "percent")
                 Text(String(format: "%2.0f", post.upvote_ratio * 100))
             }
-            .font(.caption)
+            .font(.footnote)
             
-            HStack(spacing: Constants.Space.IconText) {
+            HStack(spacing: Space.mini) {
                 Image(systemName: "text.bubble")
                 Text(String(format: "%i", post.num_comments))
             }

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct Constants {
-    struct Space {
-        static let IconText: CGFloat = 1
-        static let IconGroup: CGFloat = 10
-    }
+struct Space {
+    static let mini: CGFloat = 5
+    static let small: CGFloat = 10
+    static let medium: CGFloat = 20
+    static let large: CGFloat = 40
 }

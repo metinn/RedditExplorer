@@ -29,16 +29,16 @@ struct CommentView: View {
 
     var body: some View {
         CommentFrame(depth: depth, isCollapsed: isCollapsed) {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: Space.mini) {
                 // header
-                HStack(spacing: Constants.Space.IconGroup) {
+                HStack(spacing: Space.small) {
                     authorText
-                    HStack(spacing: Constants.Space.IconText) {
+                    HStack(spacing: Space.mini) {
                         Image(systemName: "arrow.up")
                         Text("\(comment.score)")
                     }
                 }
-                .font(.caption)
+                .font(.footnote)
                 .opacity(0.75)
                 
                 // comment text
@@ -54,7 +54,7 @@ struct CommentView: View {
                     Text(comment.body)
                 }
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, Space.small)
         }
     }
 }
