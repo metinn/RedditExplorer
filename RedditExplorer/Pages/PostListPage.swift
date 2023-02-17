@@ -50,7 +50,6 @@ class PostListViewModel: ObservableObject {
 }
 
 struct PostListPage: View {
-    @Environment(\.colorScheme) var currentMode
     @StateObject var vm: PostListViewModel
     @EnvironmentObject var homeVM: HomeViewModel
     

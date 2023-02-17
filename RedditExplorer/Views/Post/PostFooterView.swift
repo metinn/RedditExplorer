@@ -8,30 +8,27 @@
 import SwiftUI
 
 struct PostFooterView: View {
-    @Environment(\.colorScheme) var currentMode
     @State var post: Post
     
     var body: some View {
-        HStack(spacing: Space.medium) {
+        HStack(spacing: Space.large) {
             
             HStack(spacing: Space.mini) {
                 Image(systemName: "arrow.up")
                 Text("\(post.ups)")
             }
-            .font(.footnote)
             
             HStack(spacing: Space.mini) {
                 Image(systemName: "percent")
                 Text(String(format: "%2.0f", post.upvote_ratio * 100))
             }
-            .font(.footnote)
             
             HStack(spacing: Space.mini) {
                 Image(systemName: "text.bubble")
                 Text(String(format: "%i", post.num_comments))
             }
-            .font(.footnote)
         }
+        .font(.subheadline)
     }
 }
 
