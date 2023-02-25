@@ -60,8 +60,8 @@ struct PostView: View {
                             .lineLimit(vm.limitVerticalSpace ? 2 : nil)
                     }
                     
-                    PostFooterView(post: vm.post)
                 }
+                
                 Spacer()
                 
                 if vm.post.preview == nil && vm.post.thumbnail.contains("https") {
@@ -75,6 +75,9 @@ struct PostView: View {
                 }
             }
             .padding(.horizontal)
+            
+            PostFooterView(post: vm.post)
+                .frame(maxWidth: .infinity)
         }
         .contentShape(Rectangle())
         .padding(.vertical, VerticalSpace)
