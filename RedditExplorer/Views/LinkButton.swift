@@ -16,29 +16,9 @@ struct LinkButton: View {
         Button {
             homeVM.showWebView(urlString)
         } label: {
-            HStack {
-                Image(systemName: "safari.fill")
-                    .resizable()
-                    .frame(width: Space.medium,
-                           height: Space.medium)
-                    .padding(Space.mini)
-                
-                Text(urlString)
-                    .lineLimit(1)
-                    .font(.footnote)
-                    .foregroundColor(currentMode == .light ? .black : .white)
-                
-                Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .padding(Space.mini)
-            }
-            .padding(Space.mini)
-            .frame(maxWidth: .infinity)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.blue, lineWidth: 1)
+            RoundedButtonView(iconName: "safari.fill",
+                              title: urlString,
+                              trailingIconName: "chevron.right")
         }
         .padding(.horizontal)
     }

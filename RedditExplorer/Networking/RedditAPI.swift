@@ -8,23 +8,35 @@
 import Foundation
 
 protocol RedditAPIProtocol {
-    static func getPosts(_ sortBy: SortBy, subreddit: String?, after: String?, limit: Int?) async throws -> [Post]
+    static func getPosts(_ sortBy: SortBy, listing: ListingType, after: String?, limit: Int?) async throws -> [Post]
     static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
+}
+
+enum ListingType {
+    case subreddit(String?)
+    case user(String)
 }
 
 class RedditAPI: RedditAPIProtocol {
     static let baseUrl = "https://www.reddit.com"
     
-    static func getPosts(_ sortBy: SortBy, subreddit: String?, after: String?, limit: Int?) async throws -> [Post] {
+    static func getPosts(_ sortBy: SortBy, listing: ListingType, after: String?, limit: Int?) async throws -> [Post] {
         // Url creation
         let params = ["raw_json": "1",
                       "after": after,
                       "limit": limit == nil ? nil : String(limit!)]
+        var path = ""
         
-        var path = "/\(sortBy.rawValue).json"
-        if let subreddit = subreddit {
-            path = "/r/" + subreddit + path
+        switch listing {
+        case .subreddit(let subreddit):
+            if let subreddit = subreddit {
+                path += "/r/" + subreddit
+            }
+        case .user(let user):
+            path += "/u/" + user
         }
+        
+        path += "/\(sortBy.rawValue).json"
         
         let url = buildUrl(path: path, params: params)
 

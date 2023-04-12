@@ -22,7 +22,7 @@ struct SubredditsPage: View {
                     .textFieldStyle(.roundedBorder)
                     .disableAutocorrection(true)
                 
-                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: vm.subredditName))) {
+                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .hot, listing: .subreddit(vm.subredditName)))) {
                     Text("GO")
                         .padding()
                         .background(Color.teal.opacity(0.2))
@@ -50,7 +50,7 @@ struct SubredditsPage: View {
     
     @ViewBuilder
     func listPage(_ subreddit: String) -> some View {
-        PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: subreddit))
+        PostListPage(vm: PostListViewModel(sortBy: .hot, listing: .subreddit(subreddit)))
             .navigationTitle(subreddit)
     }
 }

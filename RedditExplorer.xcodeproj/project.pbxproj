@@ -12,6 +12,7 @@
 		634C486427F735A300223099 /* PostFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634C486327F735A300223099 /* PostFooterView.swift */; };
 		636D719428972A2400354E89 /* MoreCommentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D719328972A2400354E89 /* MoreCommentView.swift */; };
 		636D719628972A5800354E89 /* CommentFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636D719528972A5800354E89 /* CommentFrame.swift */; };
+		636E2E7929E468CE008A3A1F /* RoundedButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E2E7829E468CD008A3A1F /* RoundedButtonView.swift */; };
 		63A039822896800100B0C568 /* MoreComment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A039812896800100B0C568 /* MoreComment.swift */; };
 		63A039842896801C00B0C568 /* RedditObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A039832896801C00B0C568 /* RedditObjects.swift */; };
 		63A3974F2932A09B00BF6921 /* PlayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A3974E2932A09B00BF6921 /* PlayButton.swift */; };
@@ -60,6 +61,7 @@
 		634C486327F735A300223099 /* PostFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostFooterView.swift; sourceTree = "<group>"; };
 		636D719328972A2400354E89 /* MoreCommentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreCommentView.swift; sourceTree = "<group>"; };
 		636D719528972A5800354E89 /* CommentFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentFrame.swift; sourceTree = "<group>"; };
+		636E2E7829E468CD008A3A1F /* RoundedButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedButtonView.swift; sourceTree = "<group>"; };
 		63A039812896800100B0C568 /* MoreComment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreComment.swift; sourceTree = "<group>"; };
 		63A039832896801C00B0C568 /* RedditObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditObjects.swift; sourceTree = "<group>"; };
 		63A3974E2932A09B00BF6921 /* PlayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayButton.swift; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				63CCAD5528A3E9DF00C24400 /* ImageViewer.swift */,
 				63A3974E2932A09B00BF6921 /* PlayButton.swift */,
 				63DFCB94299C09200095FC1F /* LinkButton.swift */,
+				636E2E7829E468CD008A3A1F /* RoundedButtonView.swift */,
 				63C475F129A73B4E00918572 /* ActivityView.swift */,
 			);
 			path = Views;
@@ -376,6 +379,7 @@
 				636D719628972A5800354E89 /* CommentFrame.swift in Sources */,
 				63A039842896801C00B0C568 /* RedditObjects.swift in Sources */,
 				63C475F229A73B4E00918572 /* ActivityView.swift in Sources */,
+				636E2E7929E468CE008A3A1F /* RoundedButtonView.swift in Sources */,
 				63DFCB95299C09200095FC1F /* LinkButton.swift in Sources */,
 				63A039822896800100B0C568 /* MoreComment.swift in Sources */,
 				63CCAD6128A7C30900C24400 /* OnRefresh.swift in Sources */,

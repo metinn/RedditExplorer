@@ -145,6 +145,20 @@ struct PostViewPage: View {
             // Post
             PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false))
             
+            HStack {
+                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .submitted,
+                                                                               listing: .user(vm.post.author)))) {
+                    RoundedButtonView(iconName: "person.fill", title: vm.post.author)
+                }
+                
+                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .hot,
+                                                                               listing: .subreddit(vm.post.subreddit)))) {
+                    RoundedButtonView(iconName: "square.stack.fill", title: vm.post.subreddit)
+                }
+            }
+            .padding(.horizontal)
+            
+            
             // Link button
             LinkButton(urlString: vm.post.url)
             

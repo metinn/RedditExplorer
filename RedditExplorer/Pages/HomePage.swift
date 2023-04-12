@@ -36,6 +36,8 @@ class HomeViewModel: ObservableObject {
                     return "chart.line.uptrend.xyaxis"
                 case .rising:
                     return "sunrise"
+                default:
+                    return "square"
                 }
                 
             case .subreddits:
@@ -89,7 +91,7 @@ struct HomePage: View {
                 switch tab {
                 case .list(let sortBy):
                     NavigationView {
-                        PostListPage(vm: PostListViewModel(sortBy: sortBy, subReddit: nil))
+                        PostListPage(vm: PostListViewModel(sortBy: sortBy, listing: .subreddit(nil)))
                             .navigationTitle(tab.title)
                     }
                     .tabItem {

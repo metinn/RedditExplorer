@@ -10,16 +10,25 @@ import CachedAsyncImage
 
 class PostListViewModel: ObservableObject {
     let sortBy: SortBy
-    let subReddit: String?
+    let listing: ListingType
     var isFetchInProgress = false
     
     private var api: RedditAPIProtocol.Type = RedditAPI.self
     
     @Published var posts: [Post] = []
     
-    init(sortBy: SortBy, subReddit: String?) {
+    init(sortBy: SortBy, listing: ListingType) {
         self.sortBy = sortBy
-        self.subReddit = subReddit
+        self.listing = listing
+    }
+    
+    var title: String? {
+        switch listing {
+        case .subreddit(let string):
+            return string
+        case .user(let string):
+            return string
+        }
     }
     
     func fetchNextPosts() async {
@@ -29,7 +38,7 @@ class PostListViewModel: ObservableObject {
         defer { isFetchInProgress = false }
         
         do {
-            let newPosts = try await api.getPosts(sortBy, subreddit: subReddit, after: posts.last?.name, limit: 10)
+            let newPosts = try await api.getPosts(sortBy, listing: listing, after: posts.last?.name, limit: 10)
             
             DispatchQueue.main.async {
                 self.posts.append(contentsOf: newPosts)
@@ -64,6 +73,9 @@ struct PostListPage: View {
                 await vm.refreshPosts()
             }
         }
+        .ifCondition(vm.title != nil, then: { v in
+            v.navigationTitle(vm.title ?? "")
+        })
         .onAppear {
             if vm.posts.isEmpty {
                 Task { await vm.fetchNextPosts() }
@@ -81,6 +93,7 @@ struct PostListPage: View {
                     
                     PostView(vm: PostViewModel(post: post, limitVerticalSpace: true))
                     .onAppear {
+                        // TODO: Change to: Have different, loading like cell in the end. Fetch next page when that appears
                         if vm.posts.last?.name == post.name {
                             Task { await vm.fetchNextPosts() }
                         }
@@ -100,7 +113,7 @@ struct PostListPage: View {
 struct PostList_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
-            PostListPage(vm: PostListViewModel(sortBy: .hot, subReddit: nil))
+            PostListPage(vm: PostListViewModel(sortBy: .hot, listing: .subreddit(nil)))
                 .preferredColorScheme($0)
         }
     }
