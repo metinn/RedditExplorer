@@ -61,18 +61,16 @@ class PostViewViewModel: ObservableObject {
         
         if let replies = comment.replies?.data as? RedditListing {
             var newParents = parents
+            newParents.insert(comment.id)
             
             for replyObject in replies.children {
+                
                 if let reply = replyObject.data as? Comment {
-                    
-                    newParents.insert(comment.id)
                     rows.append(contentsOf: getRows(comment: reply,
                                                     depth: depth + 1,
                                                     parents: newParents))
                 }
                 else if let more = replyObject.data as? MoreComment {
-                    
-                    newParents.insert(comment.id)
                     rows.append(Row(id: more.id,
                                     parents: newParents,
                                     depth: depth + 1,
@@ -172,7 +170,7 @@ struct PostViewPage: View {
                 LazyVStack(spacing: 0) {
                     ForEach(rows, id: \.id) { row in
                         
-                        if row.parents.isDisjoint(with: Set(vm.collapsedComments)) {
+                        if row.parents.isDisjoint(with: vm.collapsedComments) {
                             if let comment = row.object as? Comment {
                                 buildComment(comment, row: row)
                             } else if let more = row.object as? MoreComment {

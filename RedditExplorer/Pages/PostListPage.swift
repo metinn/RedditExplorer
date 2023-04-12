@@ -8,6 +8,7 @@
 import SwiftUI
 import CachedAsyncImage
 
+@MainActor
 class PostListViewModel: ObservableObject {
     let sortBy: SortBy
     let listing: ListingType
@@ -39,19 +40,14 @@ class PostListViewModel: ObservableObject {
         
         do {
             let newPosts = try await api.getPosts(sortBy, listing: listing, after: posts.last?.name, limit: 10)
-            
-            DispatchQueue.main.async {
-                self.posts.append(contentsOf: newPosts)
-            }
+            self.posts.append(contentsOf: newPosts)
         } catch let err {
             print("Error: \(err.localizedDescription)")
         }
     }
     
     func refreshPosts() async {
-        DispatchQueue.main.async {
-            self.posts = []
-        }
+        self.posts = []
         // Wait a bit for user to see. Because we cannot cancel the drag gesture, user have to do it
         try? await Task.sleep(nanoseconds:  500 * 1000 * 1000)
         await fetchNextPosts()
