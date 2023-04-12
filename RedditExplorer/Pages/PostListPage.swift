@@ -68,6 +68,11 @@ struct PostListPage: View {
                 ForEach(vm.posts, id: \.url) { post in
                     buildPostCell(post)
                 }
+                
+                ProgressView()
+                    .onAppear {
+                        Task { await vm.fetchNextPosts() }
+                    }
             }
             .onRefresh {
                 await vm.refreshPosts()
@@ -76,11 +81,6 @@ struct PostListPage: View {
         .ifCondition(vm.title != nil, then: { v in
             v.navigationTitle(vm.title ?? "")
         })
-        .onAppear {
-            if vm.posts.isEmpty {
-                Task { await vm.fetchNextPosts() }
-            }
-        }
     }
     
     func buildPostCell(_ post: Post) -> some View {
@@ -92,12 +92,6 @@ struct PostListPage: View {
                     }
                     
                     PostView(vm: PostViewModel(post: post, limitVerticalSpace: true))
-                    .onAppear {
-                        // TODO: Change to: Have different, loading like cell in the end. Fetch next page when that appears
-                        if vm.posts.last?.name == post.name {
-                            Task { await vm.fetchNextPosts() }
-                        }
-                    }
                 }
             }.buttonStyle(PlainButtonStyle())
             
