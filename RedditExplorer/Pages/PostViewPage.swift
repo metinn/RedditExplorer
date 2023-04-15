@@ -143,6 +143,22 @@ struct PostViewPage: View {
             // Post
             PostView(vm: PostViewModel(post: vm.post, limitVerticalSpace: false))
             
+            links
+            
+            Divider()
+            
+            comments
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(vm.post.subreddit)
+        .onAppear {
+            vm.fetchComments()
+        }
+    }
+    
+    var links: some View {
+        VStack {
+            // user and subreddit link
             HStack {
                 NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .submitted,
                                                                                listing: .user(vm.post.author)))) {
@@ -156,38 +172,29 @@ struct PostViewPage: View {
             }
             .padding(.horizontal)
             
-            
-            // Link button
+            // Post Link
             LinkButton(urlString: vm.post.url)
-            
-            // Seperator
-            RoundedRectangle(cornerRadius: 1.5)
-                .foregroundColor(Color.gray)
-                .frame(height: 1)
-            
-            // Comments
-            if let rows = vm.rows {
-                LazyVStack(spacing: 0) {
-                    ForEach(rows, id: \.id) { row in
-                        
-                        if row.parents.isDisjoint(with: vm.collapsedComments) {
-                            if let comment = row.object as? Comment {
-                                buildComment(comment, row: row)
-                            } else if let more = row.object as? MoreComment {
-                                buildMoreComment(more, row: row)
-                            }
-                        }
-                        
-                    }
-                }
-            } else {
-                ProgressView()
-            }
         }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(vm.post.subreddit)
-        .onAppear {
-            vm.fetchComments()
+    }
+    
+    @ViewBuilder
+    var comments: some View {
+        if let rows = vm.rows {
+            LazyVStack(spacing: 0) {
+                ForEach(rows, id: \.id) { row in
+                    
+                    if row.parents.isDisjoint(with: vm.collapsedComments) {
+                        if let comment = row.object as? Comment {
+                            buildComment(comment, row: row)
+                        } else if let more = row.object as? MoreComment {
+                            buildMoreComment(more, row: row)
+                        }
+                    }
+                    
+                }
+            }
+        } else {
+            ProgressView()
         }
     }
     

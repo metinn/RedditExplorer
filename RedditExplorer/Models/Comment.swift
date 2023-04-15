@@ -1,11 +1,3 @@
-//
-//  Comment.swift
-//  Reddit
-//
-//  Created by Carson Katri on 7/27/19.
-//  Copyright © 2019 Carson Katri. All rights reserved.
-//
-
 import Foundation
 
 struct Comment: RedditObject {

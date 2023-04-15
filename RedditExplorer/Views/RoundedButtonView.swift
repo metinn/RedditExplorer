@@ -12,6 +12,8 @@ struct RoundedButtonView: View {
     let title: String
     let trailingIconName: String?
     
+    private let CornerRadius = 20.0
+    
     @Environment(\.colorScheme) var currentMode
     
     init(iconName: String, title: String, trailingIconName: String? = nil) {
@@ -40,10 +42,11 @@ struct RoundedButtonView: View {
                     .padding(Space.mini)
             }
         }
-        .padding(Space.mini)
+        .padding(.vertical, Space.mini)
+        .padding(.horizontal, CornerRadius / 2)
         .frame(maxWidth: .infinity)
         .overlay {
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: CornerRadius)
                 .stroke(Color.blue, lineWidth: 1)
         }
     }
@@ -55,5 +58,7 @@ struct RoundedButtonView_Previews: PreviewProvider {
             RoundedButtonView(iconName: "safari", title: "A Button", trailingIconName: "chevron.right")
             RoundedButtonView(iconName: "safari", title: "A Button")
         }
+        .padding()
+        .previewLayout(.sizeThatFits)
     }
 }
