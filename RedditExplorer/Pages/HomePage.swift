@@ -46,13 +46,6 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    //
-    let tabList: [HomeViewModel.Tab] = [
-        .list(.hot),
-        .list(.top),
-        .list(.rising),
-        .subreddits]
-    
     var selectedImageURL: String = ""
     @Published var showImageViewer: Bool = false
     
@@ -87,25 +80,26 @@ struct HomePage: View {
     
     var body: some View {
         TabView {
-            ForEach(vm.tabList, id: \.self) { tab in
-                switch tab {
-                case .list(let sortBy):
-                    NavigationView {
-                        PostListPage(vm: PostListViewModel(sortBy: sortBy, listing: .subreddit(nil)))
-                            .navigationTitle(tab.title)
-                    }
-                    .tabItem {
-                        Label(tab.title, systemImage: tab.icon)
-                    }
-                case .subreddits:
-                    NavigationView {
-                        SubredditsPage()
-                            .navigationTitle(tab.title)
-                    }
-                    .tabItem {
-                        Label(tab.title, systemImage: tab.icon)
-                    }
-                }
+            NavigationView {
+                PostListPage(vm: PostListViewModel(listing: .subreddit(nil)))
+            }
+            .tabItem {
+                Label("Hot", systemImage: "flame")
+            }
+            
+            NavigationView {
+                SearchPage()
+            }
+            .tabItem {
+                Label("Search", systemImage: "magnifyingglass")
+            }
+        
+            NavigationView {
+                SubredditsPage()
+                    .navigationTitle("Subreddits")
+            }
+            .tabItem {
+                Label("Subreddits", systemImage: "figure.fishing")
             }
         }
         .overlay {

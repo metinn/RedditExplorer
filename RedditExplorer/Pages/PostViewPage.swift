@@ -150,7 +150,7 @@ struct PostViewPage: View {
             comments
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationTitle(vm.post.subreddit)
+        .navigationTitle("r/" + vm.post.subreddit)
         .onAppear {
             vm.fetchComments()
         }
@@ -160,13 +160,11 @@ struct PostViewPage: View {
         VStack {
             // user and subreddit link
             HStack {
-                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .submitted,
-                                                                               listing: .user(vm.post.author)))) {
+                NavigationLink(destination: PostListPage(vm: PostListViewModel(listing: .user(vm.post.author)))) {
                     RoundedButtonView(iconName: "person.fill", title: vm.post.author)
                 }
                 
-                NavigationLink(destination: PostListPage(vm: PostListViewModel(sortBy: .hot,
-                                                                               listing: .subreddit(vm.post.subreddit)))) {
+                NavigationLink(destination: PostListPage(vm: PostListViewModel(listing: .subreddit(vm.post.subreddit)))) {
                     RoundedButtonView(iconName: "square.stack.fill", title: vm.post.subreddit)
                 }
             }

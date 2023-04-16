@@ -24,6 +24,7 @@ struct RoundedButtonView: View {
     
     var body: some View {
         HStack {
+            // TODO: is Label better to use here ?
             Image(systemName: iconName)
                 .resizable()
                 .frame(width: Space.medium,

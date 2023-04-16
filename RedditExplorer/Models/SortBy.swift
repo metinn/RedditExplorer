@@ -1,6 +1,6 @@
 import Foundation
 
-enum SortBy: String, CaseIterable {
+enum SortBy: String, CaseIterable, Identifiable {
     case hot
     case new
     case controversial
@@ -14,4 +14,8 @@ enum SortBy: String, CaseIterable {
     case upvoted
     case downvoted
     case hidden
+    
+    var id: String {
+        return rawValue
+    }
 }

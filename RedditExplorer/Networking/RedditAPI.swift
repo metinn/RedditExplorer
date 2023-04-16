@@ -12,11 +12,6 @@ protocol RedditAPIProtocol {
     static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
 }
 
-enum ListingType {
-    case subreddit(String?)
-    case user(String)
-}
-
 class RedditAPI: RedditAPIProtocol {
     static let baseUrl = "https://www.reddit.com"
     

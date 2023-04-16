@@ -7,26 +7,39 @@
 
 import SwiftUI
 import CachedAsyncImage
+import Combine
 
 @MainActor
 class PostListViewModel: ObservableObject {
-    let sortBy: SortBy
     let listing: ListingType
     var isFetchInProgress = false
     
     private var api: RedditAPIProtocol.Type = RedditAPI.self
     
     @Published var posts: [Post] = []
+    @Published var sortBy: SortBy
+    @Published var isSortingOptionsPresented = false
     
-    init(sortBy: SortBy, listing: ListingType) {
-        self.sortBy = sortBy
+    var cancelables: Set<AnyCancellable> = []
+    
+    init(listing: ListingType) {
         self.listing = listing
+        sortBy = listing.sortingOptions.first ?? .hot
+        
+        $sortBy.receive(on: DispatchQueue.main).sink { [weak self] _ in
+            Task { await self?.refreshPosts() }
+        }
+        .store(in: &cancelables)
     }
     
-    var title: String? {
+    var title: String {
         switch listing {
         case .subreddit(let string):
-            return string
+            if let string {
+                return "r/" + string
+            } else {
+                return "Front Page"
+            }
         case .user(let string):
             return string
         }
@@ -57,10 +70,11 @@ class PostListViewModel: ObservableObject {
 struct PostListPage: View {
     @StateObject var vm: PostListViewModel
     @EnvironmentObject var homeVM: HomeViewModel
+    @Environment(\.colorScheme) var currentMode
     
     var body: some View {
         ScrollView {
-            LazyVStack {
+            LazyVStack(spacing: 0) {
                 ForEach(vm.posts, id: \.url) { post in
                     buildPostCell(post)
                 }
@@ -74,13 +88,27 @@ struct PostListPage: View {
                 await vm.refreshPosts()
             }
         }
-        .ifCondition(vm.title != nil, then: { v in
-            v.navigationTitle(vm.title ?? "")
-        })
+        .navigationTitle(vm.title)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(vm.sortBy.rawValue.localizedCapitalized) {
+                    vm.isSortingOptionsPresented = true
+                }
+            }
+        }
+        .confirmationDialog("", isPresented: $vm.isSortingOptionsPresented) {
+            ForEach(vm.listing.sortingOptions) { sortBy in
+                Button(sortBy.rawValue.localizedCapitalized) {
+                    vm.sortBy = sortBy
+                }
+            }
+        } message: {
+            Text("Pick a sort option")
+        }
     }
     
     func buildPostCell(_ post: Post) -> some View {
-        return VStack {
+        return VStack(spacing: 0) {
             NavigationLink(destination: PostViewPage(vm: PostViewViewModel(post: post))) {
                 VStack {
                     if MediaPreviewView.hasPreview(post: post) {
@@ -89,12 +117,13 @@ struct PostListPage: View {
                     
                     PostView(vm: PostViewModel(post: post, limitVerticalSpace: true))
                 }
-            }.buttonStyle(PlainButtonStyle())
+            }
+            .buttonStyle(PlainButtonStyle())
             
             //Divider
             Color.gray
                 .opacity(0.2)
-                .frame(height: 10)
+                .frame(height: Space.small)
         }
     }
 }
@@ -103,7 +132,7 @@ struct PostListPage: View {
 struct PostList_Previews: PreviewProvider {
     static var previews: some View {
         ForEach(ColorScheme.allCases, id: \.self) {
-            PostListPage(vm: PostListViewModel(sortBy: .hot, listing: .subreddit(nil)))
+            PostListPage(vm: PostListViewModel(listing: .subreddit(nil)))
                 .preferredColorScheme($0)
         }
     }

@@ -63,7 +63,7 @@ class MediaPreviewViewModel: ObservableObject {
 }
 
 struct MediaPreviewView: View {
-    static let MaxPreviewHeight: CGFloat = UIScreen.main.bounds.height
+    static let MaxPreviewHeight: CGFloat = UIScreen.main.bounds.height / 2
     @StateObject var vm: MediaPreviewViewModel
     @EnvironmentObject var homeVM: HomeViewModel
     
