@@ -81,6 +81,7 @@ struct MediaPreviewView: View {
                 EmptyView()
             }
         }
+        .shadow(radius: 4)
         .onAppear {
             vm.loadPreview()
         }

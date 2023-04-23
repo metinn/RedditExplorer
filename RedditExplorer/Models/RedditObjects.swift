@@ -11,6 +11,7 @@ enum RedditObjectType: String, Decodable {
     case listing = "Listing"
     case comment = "t1"
     case link = "t3"
+    case subreddit = "t5"
     case moreComment = "more"
 }
 
@@ -45,6 +46,8 @@ struct RedditObjectWrapper: Decodable {
             data = try values.decode(RedditListing.self, forKey: .data)
         case .link:
             data = try values.decode(Post.self, forKey: .data)
+        case .subreddit:
+            data = try values.decode(Subreddit.self, forKey: .data)
         }
     }
 }

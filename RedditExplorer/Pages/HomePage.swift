@@ -86,13 +86,6 @@ struct HomePage: View {
             .tabItem {
                 Label("Hot", systemImage: "flame")
             }
-            
-            NavigationView {
-                SearchPage()
-            }
-            .tabItem {
-                Label("Search", systemImage: "magnifyingglass")
-            }
         
             NavigationView {
                 SubredditsPage()

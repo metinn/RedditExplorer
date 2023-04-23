@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import CachedAsyncImage
 import Combine
 
 @MainActor
@@ -108,7 +107,7 @@ struct PostListPage: View {
     }
     
     func buildPostCell(_ post: Post) -> some View {
-        return VStack(spacing: 0) {
+        return VStack() {
             NavigationLink(destination: PostViewPage(vm: PostViewViewModel(post: post))) {
                 VStack {
                     if MediaPreviewView.hasPreview(post: post) {

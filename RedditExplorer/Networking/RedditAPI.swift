@@ -10,6 +10,7 @@ import Foundation
 protocol RedditAPIProtocol {
     static func getPosts(_ sortBy: SortBy, listing: ListingType, after: String?, limit: Int?) async throws -> [Post]
     static func getComments(subreddit: String, id: String, commentId: String?) async throws -> [Comment]
+    static func searchSubreddits(searchText: String, limit: Int) async throws -> [Subreddit]
 }
 
 class RedditAPI: RedditAPIProtocol {
@@ -65,6 +66,24 @@ class RedditAPI: RedditAPIProtocol {
             throw NSError(domain: "Received object is not listing", code: -1, userInfo: nil)
         }
         return commentListing.children.compactMap { $0.data as? Comment }
+    }
+    
+    static func searchSubreddits(searchText: String, limit: Int) async throws -> [Subreddit] {
+        let url = buildUrl(path: "/subreddits/search.json", params: ["limit": String(limit),
+                                                                     "q": searchText])
+
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        let statusCode = (response as! HTTPURLResponse).statusCode
+        guard statusCode == 200 else {
+            throw NSError(domain: "Bad Status code: \(statusCode)", code: -1, userInfo: nil)
+        }
+        
+        let wrapper = try JSONDecoder().decode(RedditObjectWrapper.self, from: data)
+        guard let listing = wrapper.data as? RedditListing else {
+            throw NSError(domain: "Parsing Error: data is not Listing", code: -1, userInfo: nil)
+        }
+        return listing.children.compactMap { $0.data as? Subreddit }
     }
 }
 
