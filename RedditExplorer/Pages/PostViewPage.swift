@@ -52,6 +52,9 @@ class PostViewViewModel: ObservableObject {
     }
     
     func getRows(comment: Comment, depth: Int, parents: Set<String>) -> [Row] {
+        // sometimes we get "_" as id for multiple rows
+        guard comment.id.count > 2 else { return [] }
+        
         var rows = [Row]()
         let newRow = Row(id: comment.id,
                          parents: parents,
@@ -70,7 +73,7 @@ class PostViewViewModel: ObservableObject {
                                                     depth: depth + 1,
                                                     parents: newParents))
                 }
-                else if let more = replyObject.data as? MoreComment {
+                else if let more = replyObject.data as? MoreComment, more.count > 0 {
                     rows.append(Row(id: more.id,
                                     parents: newParents,
                                     depth: depth + 1,
