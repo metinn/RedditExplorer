@@ -23,7 +23,7 @@ class PostListViewModel: ObservableObject {
     
     init(listing: ListingType) {
         self.listing = listing
-        sortBy = listing.sortingOptions.first ?? .hot
+        sortBy = listing.sortingOptions.first ?? .top
         
         $sortBy.receive(on: DispatchQueue.main).sink { [weak self] _ in
             Task { await self?.refreshPosts() }

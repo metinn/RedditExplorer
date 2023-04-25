@@ -7,7 +7,7 @@ enum ListingType {
     var sortingOptions: [SortBy] {
         switch self {
         case .subreddit(_):
-            return [.hot, .top, .rising, .controversial, .new]
+            return [.top, .hot, .rising, .controversial, .new]
         case .user(_):
             return [.submitted]
             // TODO: .comments, .upvoted, .downvoted not working
