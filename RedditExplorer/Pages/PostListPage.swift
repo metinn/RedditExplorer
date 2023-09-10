@@ -14,6 +14,8 @@ class PostListViewModel: ObservableObject {
     var isFetchInProgress = false
     
     private var api: RedditAPIProtocol.Type = RedditAPI.self
+    private var defaults = UserDefaults.standard
+    private let PrefferedSortByKey = "PrefferedSortBy"
     
     @Published var posts: [Post] = []
     @Published var sortBy: SortBy
@@ -23,10 +25,14 @@ class PostListViewModel: ObservableObject {
     
     init(listing: ListingType) {
         self.listing = listing
-        sortBy = listing.sortingOptions.first ?? .top
+        
+        let prefferedSortBy = SortBy(rawValue: defaults.string(forKey: PrefferedSortByKey) ?? "")
+        sortBy = prefferedSortBy ?? listing.sortingOptions.first ?? .top
         
         $sortBy.receive(on: DispatchQueue.main).sink { [weak self] _ in
-            Task { await self?.refreshPosts() }
+            guard let self else { return }
+            self.defaults.set(self.sortBy.rawValue, forKey: self.PrefferedSortByKey)
+            Task { await self.refreshPosts() }
         }
         .store(in: &cancelables)
     }
